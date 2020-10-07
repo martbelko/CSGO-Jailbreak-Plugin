@@ -499,7 +499,7 @@ public void OnPluginStart()
 			OnClientPutInServer(i);
 }
 
-void RemoveBoughtWeapons()
+/*void RemoveBoughtWeapons()
 {
 	for (int i = 0; i < s_BoughtWeapons.Length; ++i)
 	{
@@ -517,7 +517,7 @@ void RemoveBoughtWeapons()
 	}
 	
 	s_BoughtWeapons.Clear();
-}
+}*/
 
 public void OnMapStart()
 {
@@ -644,12 +644,12 @@ public Action CMDShop(int client, int args)
 	
 	if (GetClientTeam(client) == CS_TEAM_T)
 	{
-		Menu menu = CreateMenuShopT(client);
+		Menu menu = CreateMenuShopT();
 		menu.Display(client, MENU_TIME_FOREVER);
 	}
 	else if (GetClientTeam(client) == CS_TEAM_CT)
 	{
-		Menu menu = CreateMenuShopCt(client);
+		Menu menu = CreateMenuShopCt();
 		menu.Display(client, MENU_TIME_FOREVER);
 	}
 	
@@ -725,7 +725,7 @@ Menu CreateMainMenuCt()
 	return menu;
 }
 
-Menu CreateMenuShopT(int client)
+Menu CreateMenuShopT()
 {
 	Menu menu = new Menu(MenuCallbackShop, MENU_ACTIONS_ALL);
 	menu.SetTitle("Prisoner Shop (!shop)");
@@ -741,7 +741,7 @@ Menu CreateMenuShopT(int client)
 	return menu;
 }
 
-Menu CreateMenuShopCt(int client)
+Menu CreateMenuShopCt()
 {
 	Menu menu = new Menu(MenuCallbackShop, MENU_ACTIONS_ALL);
 	menu.SetTitle("Guard Shop (!shop)");
@@ -784,7 +784,7 @@ public int MenuCallbackMainT(Menu menu, MenuAction action, int param1, int param
 			{
 				if (team == CS_TEAM_T)
 				{
-					Menu newMenu = CreateMenuShopT(param1);
+					Menu newMenu = CreateMenuShopT();
 					newMenu.Display(param1, MENU_TIME_FOREVER);
 				}
 			}
@@ -828,7 +828,7 @@ public int MenuCallbackMainCt(Menu menu, MenuAction action, int param1, int para
 			{
 				if (team == CS_TEAM_CT)
 				{
-					Menu newMenu = CreateMenuShopCt(param1);
+					Menu newMenu = CreateMenuShopCt();
 					newMenu.Display(param1, MENU_TIME_FOREVER);
 				}
 			}
@@ -857,8 +857,8 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 			char display[64];
 			int style;
 			menu.GetItem(param2, "", 0, style, display, sizeof(display));
-			char buffers[10][64];
-			int n = ExplodeString(display, " ", buffers, 10, 64);
+			/*char buffers[10][64];
+			int n = ExplodeString(display, " ", buffers, 10, 64);*/
 
 			/*char buffer[255];
 			Format(buffer, sizeof(buffer), "%T", buffers[0], param1);
