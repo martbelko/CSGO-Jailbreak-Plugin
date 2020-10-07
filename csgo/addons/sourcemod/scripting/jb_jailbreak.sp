@@ -289,7 +289,7 @@ public Action OnPlayerTeamPre(Handle event, const char[] name_t, bool dontBroadc
 	GetJailbreakName(client, team, name, sizeof(name));
 	SetClientName(client, name);
 	
-	return Plugin_Handled;
+	return Plugin_Continue;
 }
 
 public Action OnFullConnectPost(Handle event, const char[] name_t, bool dontBroadcast)
