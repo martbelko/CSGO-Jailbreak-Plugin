@@ -29,7 +29,7 @@ public Plugin myinfo =
 #define MAX_ITEM_SHOP_NAME_LENGTH 64
 
 #define TSHOP_ITEM_COUNT 21
-#define CTSHOP_ITEM_COUNT 5
+#define CTSHOP_ITEM_COUNT 6
 
 #define MESSAGE_INVISIBLE "You are invisible. %i seconds remaining"
 #define MESSAGE_FASTWALK "You can now move faster. %i seconds remaining"
@@ -155,7 +155,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Hammer");
+			NotifyPlayerHud(client, "Máš Kladivo");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Hammer", client);
 		}
 		else if (!strcmp(this.hashName, "spanner"))
@@ -164,7 +164,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Spanner");
+			NotifyPlayerHud(client, "Máš Kľúč");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Spanner", client);
 		}
 		else if (!strcmp(this.hashName, "axe"))
@@ -173,7 +173,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Axe");
+			NotifyPlayerHud(client, "Máš Sekeru");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Axe", client);
 		}
 		else if (!strcmp(this.hashName, "knife"))
@@ -182,7 +182,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Knife");
+			NotifyPlayerHud(client, "Máš Nôž");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Knife", client);
 		}
 		else if (!strcmp(this.hashName, "taser"))
@@ -191,7 +191,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Taser - Zeus");
+			NotifyPlayerHud(client, "Máš Taser - Zeus");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Taser - Zeus", client);
 		}
 		else if (!strcmp(this.hashName, "healthshot"))
@@ -200,7 +200,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Healthshot");
+			NotifyPlayerHud(client, "Máš Adrenalín");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Healthshot", client);
 		}
 		else if (!strcmp(this.hashName, "kevlar"))
@@ -208,7 +208,7 @@ enum struct ShopItem
 			SetPlayerArmor(client, 100);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Kevlar");
+			NotifyPlayerHud(client, "Máš Vestu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Kevlar", client);
 		}
 		else if (!strcmp(this.hashName, "helmet"))
@@ -216,7 +216,7 @@ enum struct ShopItem
 			SetPlayerHelmet(client, true);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Helmet");
+			NotifyPlayerHud(client, "Máš Helmu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Helmet", client);
 		}
 		else if (!strcmp(this.hashName, "kevlarhelmet"))
@@ -225,7 +225,7 @@ enum struct ShopItem
 			SetPlayerHelmet(client, true);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Kevlar + Helmet");
+			NotifyPlayerHud(client, "Máš Vestu + Helmu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Kevlar + Helmet", client);
 		}
 		else if (!strcmp(this.hashName, "hegrenade"))
@@ -234,7 +234,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got HE Grenade");
+			NotifyPlayerHud(client, "Máš Granát");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got HE Grenade", client);
 		}
 		else if (!strcmp(this.hashName, "flashbang"))
@@ -243,7 +243,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Flashbang");
+			NotifyPlayerHud(client, "Máš Flash");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Flashbang", client);
 		}
 		else if (!strcmp(this.hashName, "smoke"))
@@ -252,7 +252,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Smoke");
+			NotifyPlayerHud(client, "Máš Smoke");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Smoke", client);
 		}
 		else if (!strcmp(this.hashName, "molotov"))
@@ -261,7 +261,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Molotov");
+			NotifyPlayerHud(client, "Máš Molotov");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Molotov", client);
 		}
 		else if (!strcmp(this.hashName, "tagrenade"))
@@ -270,7 +270,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Tactical Awareness Grenade");
+			NotifyPlayerHud(client, "Máš Taktický Granát");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Tactical Awareness Grenade", client);
 		}
 		else if (!strcmp(this.hashName, "breachcharge"))
@@ -279,7 +279,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Breach charge");
+			NotifyPlayerHud(client, "Máš Výbušniny");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Breach charge", client);
 		}
 		else if (!strcmp(this.hashName, "shield"))
@@ -288,7 +288,7 @@ enum struct ShopItem
 			s_BoughtWeapons.Push(weapon);
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Shield");
+			NotifyPlayerHud(client, "Máš Štít");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Shield", client);
 		}
 		else if (!strcmp(this.hashName, "heavy"))
@@ -305,14 +305,14 @@ enum struct ShopItem
 
 			this.allowed[client] = false;
 			
-			NotifyPlayerHud(client, "You got Heavy Assault Suit");
+			NotifyPlayerHud(client, "Máš Ťažkoodeneckú Výzbroj");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Heavy Assault Suit", client);
 		}
 		else if (!strcmp(this.hashName, "djump"))
 		{
 			EnableDoubleJump(client, true);
 			
-			NotifyPlayerHud(client, "You now have Double Jump");
+			NotifyPlayerHud(client, "Máš Double Jump");
 			NotifyTeamChat(client, "[URNA Shop] Player %N now has Double Jump", client);
 		}
 		else if (!strcmp(this.hashName, "fastwalk"))
@@ -377,12 +377,12 @@ enum struct ShopItem
 			if (GetRandomInt(1, maxBound) == 1)
 			{
 				OpenDoors();
-				NotifyPlayerHud(client, "You have successfully opened cell doors");
+				NotifyPlayerHud(client, "Podarilo sa ti otvoriť cely");
 				NotifyTeamChat(client, "%N have successfully opened cells doors", client);
 			}
 			else
 			{
-				NotifyPlayerHud(client, "No luck today :(");
+				NotifyPlayerHud(client, "Tentokrát to nevyšlo :(");
 			}
 			
 			this.allowed[client] = false;
@@ -425,27 +425,27 @@ public void OnPluginStart()
 	RegAdminCmd("sm_setpoints", CMDSetPoints, ADMFLAG_CHEATS, "Set player points");
 	// TODO: sm_getpoints
 	
-	s_ShopItemT[0].Create("spanner", "Spanner", 10, IV_ALL);
+	s_ShopItemT[0].Create("spanner", "Wrench", 10, IV_ALL);
 	s_ShopItemT[1].Create("hammer", "Hammer", 12, IV_ALL);
 	s_ShopItemT[2].Create("axe", "Axe", 15, IV_ALL);
 	s_ShopItemT[3].Create("knife", "Knife", 20, IV_ALL);
 	s_ShopItemT[4].Create("taser", "Taser", 50, IV_VIP);
-	s_ShopItemT[5].Create("healthshot", "Healthshot", 80, IV_ALL);
-	s_ShopItemT[6].Create("hegrenade", "Grenade", 20, IV_ALL);
-	s_ShopItemT[7].Create("flashbang", "Flashbang", 15, IV_ALL);
-	s_ShopItemT[8].Create("smoke", "Smoke", 15, IV_ALL);
+	s_ShopItemT[5].Create("healthshot", "Healthshot", 30, IV_ALL);
+	s_ShopItemT[6].Create("hegrenade", "Grenade", 15, IV_ALL);
+	s_ShopItemT[7].Create("flashbang", "Flashbang", 12, IV_ALL);
+	s_ShopItemT[8].Create("smoke", "Smoke", 12, IV_ALL);
 	s_ShopItemT[9].Create("molotov", "Molotov", 10, IV_ALL);
-	s_ShopItemT[10].Create("tagrenade", "TacticalAwarnessGrenade", 45, IV_ALL);
-	s_ShopItemT[11].Create("kevlar", "Kevlar", 30, IV_ALL);
-	s_ShopItemT[12].Create("kevlarhelmet", "Kevlar+Helmet", 45, IV_ALL);
-	s_ShopItemT[13].Create("breachcharge", "Breachcharge", 300, IV_EVIP);
-	s_ShopItemT[14].Create("djump", "DoubleJump", 100, IV_ALL);
-	s_ShopItemT[15].Create("fastwalk", "FastWalk", 200, IV_ALL, 5);
-	s_ShopItemT[16].Create("invisibility", "Invisibility", 250, IV_ALL, 5);
-	s_ShopItemT[17].Create("changeskin", "GuardSuit", 250, IV_ALL);
-	s_ShopItemT[18].Create("blind", "BlindGuards", 300, IV_VIP, 10);
-	s_ShopItemT[19].Create("open", "OpenCellDoors", 150, IV_VIP);
-	s_ShopItemT[20].Create("fortune", "WheelofFortune", 150, IV_ALL);
+	s_ShopItemT[10].Create("tagrenade", "TacticalAwarnessGrenade", 12, IV_ALL);
+	s_ShopItemT[11].Create("kevlar", "Kevlar", 20, IV_ALL);
+	s_ShopItemT[12].Create("kevlarhelmet", "Kevlar+Helmet", 40, IV_ALL);
+	s_ShopItemT[13].Create("breachcharge", "Breachcharge", 100, IV_EVIP);
+	s_ShopItemT[14].Create("djump", "DoubleJump", 50, IV_ALL);
+	s_ShopItemT[15].Create("fastwalk", "FastWalk", 60, IV_ALL, 5);
+	s_ShopItemT[16].Create("invisibility", "Invisibility", 80, IV_ALL, 5);
+	s_ShopItemT[17].Create("changeskin", "GuardSuit", 100, IV_ALL);
+	s_ShopItemT[18].Create("blind", "BlindGuards", 120, IV_VIP, 10);
+	s_ShopItemT[19].Create("open", "OpenCellDoors", 70, IV_VIP);
+	s_ShopItemT[20].Create("fortune", "WheelofFortune", 60, IV_ALL);
 	
 	s_NormalItems = new ArrayList();
 	s_VipItems = new ArrayList();
@@ -463,11 +463,12 @@ public void OnPluginStart()
 	s_MenuMainT = CreateMainMenuT();
 	s_MenuMainCt = CreateMainMenuCt();
 	
-	s_ShopItemCt[0].Create("helmet", "Helmet", 40, IV_ALL);
-	s_ShopItemCt[1].Create("healthshot", "Healthshot", 60, IV_ALL);
-	s_ShopItemCt[2].Create("djump", "DoubleJump", 100, IV_ALL);
-	s_ShopItemCt[3].Create("shield", "Shield", 220, IV_VIP);
-	s_ShopItemCt[4].Create("heavy", "HeavyAssaultSuit", 300, IV_EVIP);
+	s_ShopItemCt[0].Create("helmet", "Helmet", 20, IV_ALL);
+	s_ShopItemCt[1].Create("tagrenade", "TacticalAwarnessGrenade", 20, IV_ALL);
+	s_ShopItemCt[2].Create("healthshot", "Healthshot", 30, IV_ALL);
+	s_ShopItemCt[3].Create("djump", "DoubleJump", 30, IV_ALL);
+	s_ShopItemCt[4].Create("shield", "Shield", 50, IV_VIP);
+	s_ShopItemCt[5].Create("heavy", "HeavyAssaultSuit", 70, IV_EVIP);
 	
 	s_BoughtWeapons = new ArrayList();
 	
