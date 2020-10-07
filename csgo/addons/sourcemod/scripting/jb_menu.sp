@@ -28,9 +28,6 @@ public Plugin myinfo =
 #define MAX_ITEM_HASH_NAME_LENGTH 32
 #define MAX_ITEM_SHOP_NAME_LENGTH 64
 
-#define TSHOP_ITEM_COUNT 21
-#define CTSHOP_ITEM_COUNT 6
-
 #define MESSAGE_INVISIBLE "You are invisible. %i seconds remaining"
 #define MESSAGE_FASTWALK "You can now move faster. %i seconds remaining"
 #define MESSAGE_BLIND "All guards are blind. %i seconds remaining"
@@ -393,8 +390,8 @@ enum struct ShopItem
 static Menu s_MenuMainT = null;
 static Menu s_MenuMainCt = null;
 
-static ShopItem s_ShopItemT[TSHOP_ITEM_COUNT];
-static ShopItem s_ShopItemCt[CTSHOP_ITEM_COUNT];
+static ArrayList s_ShopItemsT;
+static ArrayList s_ShopItemsCt;
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 {
@@ -417,51 +414,83 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_shop", CMDShop, "Shop for guards/prisoners");
 	RegAdminCmd("sm_setpoints", CMDSetPoints, ADMFLAG_CHEATS, "Set player points");
 	// TODO: sm_getpoints
+
+	s_ShopItemsT = new ArrayList(sizeof(ShopItem));
+	s_ShopItemsCt = new ArrayList(sizeof(ShopItem));
 	
-	s_ShopItemT[0].Create("spanner", "Wrench", 10, VM_None);
-	s_ShopItemT[1].Create("hammer", "Hammer", 12, VM_None);
-	s_ShopItemT[2].Create("axe", "Axe", 15, VM_None);
-	s_ShopItemT[3].Create("knife", "Knife", 20, VM_None);
-	s_ShopItemT[4].Create("taser", "Taser", 50, VM_Vip);
-	s_ShopItemT[5].Create("healthshot", "Healthshot", 30, VM_None);
-	s_ShopItemT[6].Create("hegrenade", "Grenade", 15, VM_None);
-	s_ShopItemT[7].Create("flashbang", "Flashbang", 12, VM_None);
-	s_ShopItemT[8].Create("smoke", "Smoke", 12, VM_None);
-	s_ShopItemT[9].Create("molotov", "Molotov", 10, VM_None);
-	s_ShopItemT[10].Create("tagrenade", "TacticalAwarnessGrenade", 12, VM_None);
-	s_ShopItemT[11].Create("kevlar", "Kevlar", 20, VM_None);
-	s_ShopItemT[12].Create("kevlarhelmet", "Kevlar+Helmet", 40, VM_None);
-	s_ShopItemT[13].Create("breachcharge", "Breachcharge", 100, VM_ExtraVip);
-	s_ShopItemT[14].Create("djump", "DoubleJump", 50, VM_None);
-	s_ShopItemT[15].Create("fastwalk", "FastWalk", 60, VM_None, 5);
-	s_ShopItemT[16].Create("invisibility", "Invisibility", 80, VM_None, 5);
-	s_ShopItemT[17].Create("changeskin", "GuardSuit", 100, VM_None);
-	s_ShopItemT[18].Create("blind", "BlindGuards", 120, VM_Vip, 10);
-	s_ShopItemT[19].Create("open", "OpenCellDoors", 70, VM_Vip);
-	s_ShopItemT[20].Create("fortune", "WheelofFortune", 60, VM_None);
+	ShopItem item;
+	item.Create("spanner", "Wrench", 10, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("hammer", "Hammer", 12, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("axe", "Axe", 15, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("knife", "Knife", 20, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("taser", "Taser", 50, VM_Vip);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("healthshot", "Healthshot", 30, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("hegrenade", "Grenade", 15, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("flashbang", "Flashbang", 12, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("smoke", "Smoke", 12, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("molotov", "Molotov", 10, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("tagrenade", "TacticalAwarnessGrenade", 12, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("kevlar", "Kevlar", 20, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("kevlarhelmet", "Kevlar+Helmet", 40, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("breachcharge", "Breachcharge", 100, VM_ExtraVip);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("djump", "DoubleJump", 50, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("fastwalk", "FastWalk", 60, VM_None, 5);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("invisibility", "Invisibility", 80, VM_None, 5);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("changeskin", "GuardSuit", 100, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("blind", "BlindGuards", 120, VM_Vip, 10);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("open", "OpenCellDoors", 70, VM_Vip);
+	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("fortune", "WheelofFortune", 60, VM_None);
+	s_ShopItemsT.PushArray(item, sizeof(item));
 	
 	s_NormalItems = new ArrayList();
 	s_VipItems = new ArrayList();
 	s_EVipItems = new ArrayList();
-	for (int i = 0; i < TSHOP_ITEM_COUNT; ++i)
+	for (int i = 0; i < s_ShopItemsT.Length; ++i)
 	{
-		if (s_ShopItemT[i].vipOnly == VM_None)
+		s_ShopItemsT.GetArray(i, item, sizeof(item));
+		if (item.vipOnly == VM_None)
 			s_NormalItems.Push(i);
-		else if (s_ShopItemT[i].vipOnly == VM_Vip)
+		else if (item.vipOnly == VM_Vip)
 			s_VipItems.Push(i);
-		else if (s_ShopItemT[i].vipOnly == VM_ExtraVip)
+		else if (item.vipOnly == VM_ExtraVip)
 			s_EVipItems.Push(i);
 	}
 	
 	s_MenuMainT = CreateMainMenuT();
 	s_MenuMainCt = CreateMainMenuCt();
 	
-	s_ShopItemCt[0].Create("helmet", "Helmet", 20, VM_None);
-	s_ShopItemCt[1].Create("tagrenade", "TacticalAwarnessGrenade", 20, VM_None);
-	s_ShopItemCt[2].Create("healthshot", "Healthshot", 30, VM_None);
-	s_ShopItemCt[3].Create("djump", "DoubleJump", 30, VM_None);
-	s_ShopItemCt[4].Create("shield", "Shield", 50, VM_Vip);
-	s_ShopItemCt[5].Create("heavy", "HeavyAssaultSuit", 70, VM_ExtraVip);
+	item.Create("helmet", "Helmet", 20, VM_None);
+	s_ShopItemsCt.PushArray(item, sizeof(item));
+	item.Create("tagrenade", "TacticalAwarnessGrenade", 20, VM_None);
+	s_ShopItemsCt.PushArray(item, sizeof(item));
+	item.Create("healthshot", "Healthshot", 30, VM_None);
+	s_ShopItemsCt.PushArray(item, sizeof(item));
+	item.Create("djump", "DoubleJump", 30, VM_None);
+	s_ShopItemsCt.PushArray(item, sizeof(item));
+	item.Create("shield", "Shield", 50, VM_Vip);
+	s_ShopItemsCt.PushArray(item, sizeof(item));
+	item.Create("heavy", "HeavyAssaultSuit", 70, VM_ExtraVip);
+	s_ShopItemsCt.PushArray(item, sizeof(item));
 	
 	s_BoughtWeapons = new ArrayList();
 	
@@ -532,14 +561,17 @@ public Action OnPlayerDeathPost(Handle event, const char[] name, bool dontBroadc
 public Action OnRoundStart(Handle event, const char[] name, bool dontBroadcast)
 {
 	s_ShopTimer = CreateTimer(TIME_FOR_SHOP, TimerCallbackForShop);
+	ShopItem item;
 	
-	for (int i = 0; i < TSHOP_ITEM_COUNT; ++i)
+	for (int i = 0; i < s_ShopItemsT.Length; ++i)
 	{
-		s_ShopItemT[i].ResetAllowed();
+		s_ShopItemsT.GetArray(i, item, sizeof(item));
+		item.ResetAllowed();
 	}
-	for (int i = 0; i < CTSHOP_ITEM_COUNT; ++i)
+	for (int i = 0; i < s_ShopItemsCt.Length; ++i)
 	{
-		s_ShopItemCt[i].ResetAllowed();
+		s_ShopItemsCt.GetArray(i, item, sizeof(item));
+		item.ResetAllowed();
 	}
 	
 	for (int i = 1; i <= MaxClients; ++i)
@@ -697,11 +729,13 @@ Menu CreateMenuShopT(int client)
 {
 	Menu menu = new Menu(MenuCallbackShop, MENU_ACTIONS_ALL);
 	menu.SetTitle("Prisoner Shop (!shop)");
-	for (int i = 0; i < TSHOP_ITEM_COUNT; ++i)
+	ShopItem item;
+	for (int i = 0; i < s_ShopItemsT.Length; ++i)
 	{
 		char buffer[3];
 		IntToString(i, buffer, sizeof(buffer));
-		menu.AddItem(buffer, s_ShopItemT[i].shopName);
+		s_ShopItemsT.GetArray(i, item, sizeof(item));
+		menu.AddItem(buffer, item.shopName);
 	}
 	
 	return menu;
@@ -711,11 +745,13 @@ Menu CreateMenuShopCt(int client)
 {
 	Menu menu = new Menu(MenuCallbackShop, MENU_ACTIONS_ALL);
 	menu.SetTitle("Guard Shop (!shop)");
-	for (int i = 0; i < CTSHOP_ITEM_COUNT; ++i)
+	ShopItem item;
+	for (int i = 0; i < s_ShopItemsCt.Length; ++i)
 	{
 		char buffer[3];
 		IntToString(i, buffer, sizeof(buffer));
-		menu.AddItem(buffer, s_ShopItemCt[i].shopName);
+		s_ShopItemsCt.GetArray(i, item, sizeof(item));
+		menu.AddItem(buffer, item.shopName);
 	}
 	
 	return menu;
@@ -842,7 +878,9 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 			int index = StringToInt(info, 10);
 			if (GetClientTeam(param1) == CS_TEAM_T)
 			{
-				if (!s_ShopItemT[index].CanUse(param1, false))
+				ShopItem item;
+				s_ShopItemsT.GetArray(index, item, sizeof(item));
+				if (!item.CanUse(param1, false))
 				{
 					return ITEMDRAW_DISABLED;
 				}
@@ -853,7 +891,9 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 			}
 			else if (GetClientTeam(param1) == CS_TEAM_CT)
 			{
-				if (!s_ShopItemCt[index].CanUse(param1, false))
+				ShopItem item;
+				s_ShopItemsCt.GetArray(index, item, sizeof(item));
+				if (!item.CanUse(param1, false))
 				{
 					return ITEMDRAW_DISABLED;
 				}
@@ -870,19 +910,21 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 			int index = StringToInt(itemName, 10);
 			if (GetClientTeam(param1) == CS_TEAM_T)
 			{
-				if (!s_ShopItemT[index].CanUse(param1))
-				{
+				ShopItem item;
+				s_ShopItemsT.GetArray(index, item, sizeof(item));
+				if (!item.CanUse(param1))
 					return 0;
-				}
-				s_ShopItemT[index].Use(param1);
+					
+				item.Use(param1);
 			}
 			else if (GetClientTeam(param1) == CS_TEAM_CT)
 			{
-				if (!s_ShopItemCt[index].CanUse(param1))
-				{
+				ShopItem item;
+				s_ShopItemsCt.GetArray(index, item, sizeof(item));
+				if (!item.CanUse(param1))
 					return 0;
-				}
-				s_ShopItemCt[index].Use(param1);
+					
+				item.Use(param1);
 			}
 			
 			/*if (StrEqual(itemName, "hammer"))
@@ -1055,7 +1097,9 @@ public Action TimerCallbackFortune(Handle timer, int client)
 			itemIndex = s_EVipItems.Get(random - s_NormalItems.Length - s_VipItems.Length);
 		}
 		
-		s_ShopItemT[itemIndex].Use(client, false);
+		ShopItem item;
+		s_ShopItemsT.GetArray(itemIndex, item, sizeof(item));
+		item.Use(client, false);
 	}
 }
 
