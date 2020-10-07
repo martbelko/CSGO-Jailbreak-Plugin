@@ -220,9 +220,9 @@ VipMode GetClientVipMode(int client)
 {
 	if (IsAdmin(client))
 			return VM_ADMIN;
-	if (IsExtraVip(client))
+	if (IsClientExtraVip(client))
 		return VM_EVIP;
-	if (IsVip(client))
+	if (IsClientVip(client))
 		return VM_VIP;
 	return VM_ALL;
 }
@@ -230,7 +230,7 @@ VipMode GetClientVipMode(int client)
 bool CanUseModel(int client, int modelIndex)
 {
 	Model mdl;
-	s_Models.GetArray(modelIndex, mdl, sizeof(mdl));
+	s_ModelArrayList.GetArray(modelIndex, mdl, sizeof(mdl));
 	if (mdl.team != GetClientTeam(client))
 		return false;
 	
@@ -297,6 +297,12 @@ public void OnPluginStart()
 	
 	BuildPath(Path_SM, s_ModelDownloadPath, sizeof(s_ModelDownloadPath), PATH_MODELS_DOWNLOAD);
 	BuildPath(Path_SM, s_ModelGroupsPath, sizeof(s_ModelGroupsPath), PATH_MODELS_GROUPS);
+	
+	OnMapStart();
+
+	for (int i = 1; i <= MaxClients; ++i)
+		if (IsClientInGame(i))
+			OnClientPutInServer(i);
 }
 
 public void OnClientPutInServer(int client)
