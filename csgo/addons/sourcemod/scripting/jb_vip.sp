@@ -23,14 +23,7 @@ public Plugin myinfo =
 	url = ""
 };
 
-enum VipMode
-{
-	None = 0,
-	Vip,
-	ExtraVip
-}
-
-VipMode vips[MAXPLAYERS + 1] = None;
+VipMode vips[MAXPLAYERS + 1] = VM_None;
 
 Handle DB = INVALID_HANDLE;
 
@@ -86,17 +79,16 @@ public void OnClientAuthorized(int client, const char[] auth)
 		SQL_FetchString(queryH, 1, type, sizeof(type));
 		if (StrEqual(type, "s"))
 		{
-			vips[client] = Vip;
+			vips[client] = VM_Vip;
 		}
 		else if (StrEqual(type, "t"))
 		{
-			vips[client] = ExtraVip;
+			vips[client] = VM_ExtraVip;
 		}
 	}
 	else
 	{
-		PrintToChatAll("None");
-		vips[client] = None;
+		vips[client] = VM_None;
 	}
 }
 
@@ -225,12 +217,12 @@ public Action CMD_AddExtraVip(int client, int args)
 public int native_IsVip(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
-	return (vips[client] == Vip || vips[client] == ExtraVip);
+	return (vips[client] == VM_Vip || vips[client] == VM_ExtraVip);
 }
 
 // native bool IsExtraVip(int client);
 public int native_IsExtraVip(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
-	return (vips[client] == ExtraVip);
+	return (vips[client] == VM_ExtraVip);
 }
