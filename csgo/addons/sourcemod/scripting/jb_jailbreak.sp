@@ -280,9 +280,7 @@ void GetJailbreakName(int client, int team, char[] name, int size)
 public Action OnPlayerTeamPre(Handle event, const char[] name_t, bool dontBroadcast)
 {
 	if (GetEventInt(event, "disconnect"))
-	{
 		return Plugin_Handled;
-	}
 	
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	int team = GetEventInt(event, "team");
@@ -290,9 +288,6 @@ public Action OnPlayerTeamPre(Handle event, const char[] name_t, bool dontBroadc
 	char name[MAX_NAME_LENGTH];
 	GetJailbreakName(client, team, name, sizeof(name));
 	SetClientName(client, name);
-	
-	SetEventBool(event, "silent", true);
-	FireEvent(event, false);
 	
 	return Plugin_Handled;
 }
