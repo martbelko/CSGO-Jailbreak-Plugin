@@ -11,10 +11,10 @@
 #include <sdkhooks>
 #include <clientprefs>
 
+#pragma newdecls required
+
 #include <jb_core>
 #include <jb_lastrequest>
-
-#pragma newdecls required
 
 static ConVar sv_alltalk = null;
 static ConVar sv_deadtalk = null;
