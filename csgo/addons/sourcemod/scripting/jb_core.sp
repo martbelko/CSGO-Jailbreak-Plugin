@@ -158,7 +158,7 @@ public Action OnRoundStart(Handle event, const char[] name, bool dontBroadcast)
 	if(sv_talk_enemy_living != null)
 		sv_talk_enemy_living.BoolValue = true;
 		
-	//ServerCommand("bot_kick");
+	ServerCommand("bot_kick");
 }
 
 /* This is for complete disarming on round start */
