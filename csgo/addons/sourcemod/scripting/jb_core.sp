@@ -128,11 +128,6 @@ public void OnMapEnd()
 	ClearArray(g_DoorList);
 }
 
-public void OnClientPutInServer(int client)
-{
-	
-}
-
 public void OnClientDisconnect(int client)
 {
 	s_DJumpPlayer[client] = false;
