@@ -58,19 +58,12 @@ static ArrayList s_EVipItems;
 static Handle s_ShopTimer = INVALID_HANDLE;
 static bool s_ShopEnabled = true;
 
-enum ItemVip
-{
-	IV_ALL,
-	IV_VIP,
-	IV_EVIP
-}
-
 enum struct ShopItem
 {
 	char hashName[MAX_ITEM_HASH_NAME_LENGTH];
 	char shopName[MAX_ITEM_SHOP_NAME_LENGTH];
 	int price;
-	ItemVip vipOnly;
+	VipMode vipOnly;
 	int length;
 	bool allowed[MAXPLAYERS + 1];
 	
@@ -82,7 +75,7 @@ enum struct ShopItem
 		}
 	}
 	
-	void Create(const char[] hashName_t, const char[] shopName_t, int price_t, ItemVip vipOnly_t, int length_t = 0)
+	void Create(const char[] hashName_t, const char[] shopName_t, int price_t, VipMode vipOnly_t, int length_t = 0)
 	{
 		this.ResetAllowed();
 		
@@ -104,11 +97,11 @@ enum struct ShopItem
 		StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, buffer);
 		StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, "]");
 		
-		if (vipOnly_t == IV_VIP)
+		if (vipOnly_t == VM_Vip)
 		{
 			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " ( VIP )");
 		}
-		else if (vipOnly_t == IV_EVIP)
+		else if (vipOnly_t == VM_ExtraVip)
 		{
 			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " ( ExtraVIP )");
 		}
@@ -126,13 +119,13 @@ enum struct ShopItem
 				NotifyPlayerHud(client, "Sorry, you don't have enough points for this item");
 			return false;
 		}
-		if (this.vipOnly == IV_VIP && !IsClientVip(client))
+		if (this.vipOnly == VM_Vip && !IsClientVip(client))
 		{
 			if (notify)
 				NotifyPlayerHud(client, "Sorry, you need to be VIP to get this item");
 			return false;
 		}
-		if (this.vipOnly == IV_EVIP && !IsClientExtraVip(client))
+		if (this.vipOnly == VM_ExtraVip && !IsClientExtraVip(client))
 		{
 			if (notify)
 				NotifyPlayerHud(client, "Sorry, you need to be ExtraVIP to get this item");
@@ -425,50 +418,50 @@ public void OnPluginStart()
 	RegAdminCmd("sm_setpoints", CMDSetPoints, ADMFLAG_CHEATS, "Set player points");
 	// TODO: sm_getpoints
 	
-	s_ShopItemT[0].Create("spanner", "Wrench", 10, IV_ALL);
-	s_ShopItemT[1].Create("hammer", "Hammer", 12, IV_ALL);
-	s_ShopItemT[2].Create("axe", "Axe", 15, IV_ALL);
-	s_ShopItemT[3].Create("knife", "Knife", 20, IV_ALL);
-	s_ShopItemT[4].Create("taser", "Taser", 50, IV_VIP);
-	s_ShopItemT[5].Create("healthshot", "Healthshot", 30, IV_ALL);
-	s_ShopItemT[6].Create("hegrenade", "Grenade", 15, IV_ALL);
-	s_ShopItemT[7].Create("flashbang", "Flashbang", 12, IV_ALL);
-	s_ShopItemT[8].Create("smoke", "Smoke", 12, IV_ALL);
-	s_ShopItemT[9].Create("molotov", "Molotov", 10, IV_ALL);
-	s_ShopItemT[10].Create("tagrenade", "TacticalAwarnessGrenade", 12, IV_ALL);
-	s_ShopItemT[11].Create("kevlar", "Kevlar", 20, IV_ALL);
-	s_ShopItemT[12].Create("kevlarhelmet", "Kevlar+Helmet", 40, IV_ALL);
-	s_ShopItemT[13].Create("breachcharge", "Breachcharge", 100, IV_EVIP);
-	s_ShopItemT[14].Create("djump", "DoubleJump", 50, IV_ALL);
-	s_ShopItemT[15].Create("fastwalk", "FastWalk", 60, IV_ALL, 5);
-	s_ShopItemT[16].Create("invisibility", "Invisibility", 80, IV_ALL, 5);
-	s_ShopItemT[17].Create("changeskin", "GuardSuit", 100, IV_ALL);
-	s_ShopItemT[18].Create("blind", "BlindGuards", 120, IV_VIP, 10);
-	s_ShopItemT[19].Create("open", "OpenCellDoors", 70, IV_VIP);
-	s_ShopItemT[20].Create("fortune", "WheelofFortune", 60, IV_ALL);
+	s_ShopItemT[0].Create("spanner", "Wrench", 10, VM_None);
+	s_ShopItemT[1].Create("hammer", "Hammer", 12, VM_None);
+	s_ShopItemT[2].Create("axe", "Axe", 15, VM_None);
+	s_ShopItemT[3].Create("knife", "Knife", 20, VM_None);
+	s_ShopItemT[4].Create("taser", "Taser", 50, VM_Vip);
+	s_ShopItemT[5].Create("healthshot", "Healthshot", 30, VM_None);
+	s_ShopItemT[6].Create("hegrenade", "Grenade", 15, VM_None);
+	s_ShopItemT[7].Create("flashbang", "Flashbang", 12, VM_None);
+	s_ShopItemT[8].Create("smoke", "Smoke", 12, VM_None);
+	s_ShopItemT[9].Create("molotov", "Molotov", 10, VM_None);
+	s_ShopItemT[10].Create("tagrenade", "TacticalAwarnessGrenade", 12, VM_None);
+	s_ShopItemT[11].Create("kevlar", "Kevlar", 20, VM_None);
+	s_ShopItemT[12].Create("kevlarhelmet", "Kevlar+Helmet", 40, VM_None);
+	s_ShopItemT[13].Create("breachcharge", "Breachcharge", 100, VM_ExtraVip);
+	s_ShopItemT[14].Create("djump", "DoubleJump", 50, VM_None);
+	s_ShopItemT[15].Create("fastwalk", "FastWalk", 60, VM_None, 5);
+	s_ShopItemT[16].Create("invisibility", "Invisibility", 80, VM_None, 5);
+	s_ShopItemT[17].Create("changeskin", "GuardSuit", 100, VM_None);
+	s_ShopItemT[18].Create("blind", "BlindGuards", 120, VM_Vip, 10);
+	s_ShopItemT[19].Create("open", "OpenCellDoors", 70, VM_Vip);
+	s_ShopItemT[20].Create("fortune", "WheelofFortune", 60, VM_None);
 	
 	s_NormalItems = new ArrayList();
 	s_VipItems = new ArrayList();
 	s_EVipItems = new ArrayList();
 	for (int i = 0; i < TSHOP_ITEM_COUNT; ++i)
 	{
-		if (s_ShopItemT[i].vipOnly == IV_ALL)
+		if (s_ShopItemT[i].vipOnly == VM_None)
 			s_NormalItems.Push(i);
-		else if (s_ShopItemT[i].vipOnly == IV_VIP)
+		else if (s_ShopItemT[i].vipOnly == VM_Vip)
 			s_VipItems.Push(i);
-		else if (s_ShopItemT[i].vipOnly == IV_EVIP)
+		else if (s_ShopItemT[i].vipOnly == VM_ExtraVip)
 			s_EVipItems.Push(i);
 	}
 	
 	s_MenuMainT = CreateMainMenuT();
 	s_MenuMainCt = CreateMainMenuCt();
 	
-	s_ShopItemCt[0].Create("helmet", "Helmet", 20, IV_ALL);
-	s_ShopItemCt[1].Create("tagrenade", "TacticalAwarnessGrenade", 20, IV_ALL);
-	s_ShopItemCt[2].Create("healthshot", "Healthshot", 30, IV_ALL);
-	s_ShopItemCt[3].Create("djump", "DoubleJump", 30, IV_ALL);
-	s_ShopItemCt[4].Create("shield", "Shield", 50, IV_VIP);
-	s_ShopItemCt[5].Create("heavy", "HeavyAssaultSuit", 70, IV_EVIP);
+	s_ShopItemCt[0].Create("helmet", "Helmet", 20, VM_None);
+	s_ShopItemCt[1].Create("tagrenade", "TacticalAwarnessGrenade", 20, VM_None);
+	s_ShopItemCt[2].Create("healthshot", "Healthshot", 30, VM_None);
+	s_ShopItemCt[3].Create("djump", "DoubleJump", 30, VM_None);
+	s_ShopItemCt[4].Create("shield", "Shield", 50, VM_Vip);
+	s_ShopItemCt[5].Create("heavy", "HeavyAssaultSuit", 70, VM_ExtraVip);
 	
 	s_BoughtWeapons = new ArrayList();
 	
