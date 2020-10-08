@@ -313,7 +313,7 @@ public Action OnPlayerSpawnPost(int client)
 	
 	CreateTimer(0.1, TimerShowPlayerHud, client, TIMER_REPEAT);
 	CreateTimer(0.1, TimerHideRadar, client);
-	CreateTimer(0.1, TImerCallbackGiveWeapons, client);
+	CreateTimer(0.2, TImerCallbackGiveWeapons, client);
 	
 	g_Rebels[client] = false;
 	
