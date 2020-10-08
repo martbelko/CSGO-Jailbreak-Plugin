@@ -182,8 +182,36 @@ void AddToDatabase(int client, char[] steamid, char[] type, int length)
 	ReplyToCommand(client, "Added to database");
 }
 
+bool IsSteamidInDatabase(const char[] steamid)
+{
+	char query[150];
+	Format(query, sizeof(query), "SELECT steamid FROM AdminVip WHERE steamid='%s'", steamid);
+	Handle queryH = SQL_Query(DB, query);
+	if (queryH == INVALID_HANDLE)
+	{
+		char error[70];
+		SQL_GetError(DB, error, sizeof(error));
+		PrintToServer("Could not query message: %s", query);
+		PrintToServer("Error: %s", error);
+		return false;
+	}
+	
+	if (SQL_FetchRow(queryH))
+	{
+		return true;
+	}
+	
+	return false;
+}
+
 void RemoveFromDatabase(int client, const char[] steamid)
 {
+	if (!IsSteamidInDatabase(steamid))
+	{
+		ReplyToCommand(client, "Unable to find steamid '%s' in database", steamid);
+		return;
+	}
+	
 	char query[300];
 	Format(query, sizeof(query), "DELETE FROM AdminVip WHERE steamid='%s'", steamid);
 	
@@ -197,10 +225,7 @@ void RemoveFromDatabase(int client, const char[] steamid)
 		return;
 	}
 	
-	if (SQL_FetchRow(queryH))
-	{
-		ReplyToCommand(client, "Removed from VIP");
-	}
+	ReplyToCommand(client, "Removed from VIP");
 }
 
 public Action CMD_AddVip(int client, int args)
