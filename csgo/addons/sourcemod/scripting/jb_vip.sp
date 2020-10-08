@@ -56,6 +56,7 @@ public void OnPluginStart()
 	
 	RegAdminCmd("sm_addvip", CMD_AddVip, ADMFLAG_CUSTOM1, "Add VIP");
 	RegAdminCmd("sm_addextravip", CMD_AddExtraVip, ADMFLAG_CUSTOM1, "Add ExtraVIP");
+	RegAdminCmd("sm_removevip", CMDRemoveVip, ADMFLAG_CUSTOM1, "Remove VIP");
 }
 
 public void OnClientAuthorized(int client, const char[] auth)
@@ -181,6 +182,27 @@ void AddToDatabase(int client, char[] steamid, char[] type, int length)
 	ReplyToCommand(client, "Added to database");
 }
 
+void RemoveFromDatabase(int client, const char[] steamid)
+{
+	char query[300];
+	Format(query, sizeof(query), "DELETE FROM AdminVip WHERE steamid='%s'", steamid);
+	
+	Handle queryH = SQL_Query(DB, query);
+	if (queryH == INVALID_HANDLE)
+	{
+		char error[70];
+		SQL_GetError(DB, error, sizeof(error));
+		ReplyToCommand(client, "Could not query message: %s", query);
+		ReplyToCommand(client, "Error: %s", error);
+		return;
+	}
+	
+	if (SQL_FetchRow(queryH))
+	{
+		ReplyToCommand(client, "Removed from VIP");
+	}
+}
+
 public Action CMD_AddVip(int client, int args)
 {
 	if (args < 1)
@@ -210,6 +232,21 @@ public Action CMD_AddExtraVip(int client, int args)
 	
 	AddToDatabase(client, steamid, "t", 30);
 	
+	return Plugin_Handled;
+}
+
+public Action CMDRemoveVip(int client, int args)
+{
+	if (args < 1)
+	{
+		ReplyToCommand(client, "Usage: sm_removevip <steamid>");
+		return Plugin_Handled;
+	}
+	
+	char steamid[32];
+	GetCmdArgString(steamid, sizeof(steamid));
+	
+	RemoveFromDatabase(client, steamid);
 	return Plugin_Handled;
 }
 
