@@ -281,13 +281,13 @@ public Action TimerLrChickenFightCheck(Handle timer, any data)
 			PrintToChatAll("Chicken fight winner: %N", winner);
 			PrintToChatAll("Slaying loser: %N", loser);
 			
-			SlapPlayer(loser, 100, false);
+			ForcePlayerSuicide(loser);
 			
 			Handle event = CreateEvent("player_death");
 			SetEventInt(event, "userid", GetClientUserId(loser));
 			SetEventInt(event, "attacker", GetClientUserId(winner));
 			SetEventString(event, "weapon", "");
-			FireEvent(event, false);
+			FireEvent(event, true);
 
 			KillTimer(timer);
 		}
@@ -311,18 +311,18 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 }
 
 // TODO: Duplication with player_death
-public void OnClientDisconnect(int client)
+/*public void OnClientDisconnect(int client)
 {
 	if (s_ActiveLr != LR_NO_LR)
 	{
 		if (client == s_LrPlayerT || client == s_LrPlayerCt)
 		{
-			ResetLr();
 			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
 			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
+			ResetLr();
 		}
 	}
-}
+}*/
 
 public void OnPluginStart()
 {
@@ -405,9 +405,9 @@ public Action OnPlayerDeathPost(Handle event, const char[] name, bool dontBroadc
 		int client = GetClientOfUserId(GetEventInt(event, "userid"));
 		if (client == s_LrPlayerT || client == s_LrPlayerCt)
 		{
-			ResetLr();
 			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
 			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
+			ResetLr();
 		}
 	}
 }
