@@ -71,8 +71,8 @@ public void OnPluginStart()
 	s_Owners = new ArrayList(sizeof(Handle));
 	
 	for (int i = 1; i <= MaxClients; ++i)
-	if (IsClientInGame(i))
-		OnClientPutInServer(i);
+		if (IsClientInGame(i))
+			OnClientPutInServer(i);
 }
 
 public Action SayText2(UserMsg msg_id, Handle bf, players[], int playersNum, bool reliable, bool init)
@@ -105,6 +105,7 @@ public void OnClientPutInServer(int client)
 	SDKHook(client, SDKHook_WeaponEquipPost, OnWeaponEquipPost);
 	SDKHook(client, SDKHook_SpawnPost, OnPlayerSpawnPost);
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
+	SDKHook(client, SDKHook_PostThinkPost, OnPostThinkPost);
 	
 	GetClientName(client, s_OriginalNames[client], MAX_NAME_LENGTH);
 }
@@ -313,7 +314,7 @@ public Action OnPlayerSpawnPost(int client)
 	
 	CreateTimer(0.1, TimerShowPlayerHud, client, TIMER_REPEAT);
 	CreateTimer(0.1, TimerHideRadar, client);
-	CreateTimer(0.2, TImerCallbackGiveWeapons, client);
+	CreateTimer(0.5, TImerCallbackGiveWeapons, client);
 	
 	g_Rebels[client] = false;
 	
@@ -364,6 +365,11 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	}
 	
 	return Plugin_Continue;
+}
+
+public void OnPostThinkPost(int client)
+{
+	SetEntProp(client, Prop_Send, "m_iAddonBits", 0);
 }
 
 public Action OnWeaponCanUse(int client, int weapon)
