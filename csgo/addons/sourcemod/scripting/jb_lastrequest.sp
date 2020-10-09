@@ -311,18 +311,20 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 }
 
 // TODO: Duplication with player_death
-/*public void OnClientDisconnect(int client)
+public void OnClientDisconnect(int client)
 {
 	if (s_ActiveLr != LR_NO_LR)
 	{
 		if (client == s_LrPlayerT || client == s_LrPlayerCt)
 		{
-			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
-			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
+			if (IsClientValid(s_LrPlayerT))
+				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
+			if (IsClientValid(s_LrPlayerT))
+				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
 			ResetLr();
 		}
 	}
-}*/
+}
 
 public void OnPluginStart()
 {
@@ -405,8 +407,10 @@ public Action OnPlayerDeathPost(Handle event, const char[] name, bool dontBroadc
 		int client = GetClientOfUserId(GetEventInt(event, "userid"));
 		if (client == s_LrPlayerT || client == s_LrPlayerCt)
 		{
-			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
-			ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
+			if (IsClientValid(s_LrPlayerT))
+				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
+			if (IsClientValid(s_LrPlayerT))
+				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
 			ResetLr();
 		}
 	}
@@ -702,7 +706,7 @@ public int CallbackLrMenu(Menu menu, MenuAction action, int client, int option)
 			{
 				s_PredictActiveLr = LR_REBEL;
 				s_LrPlayerT = client;
-				s_LrPlayerCt = 0;
+				s_LrPlayerCt = -1;
 				s_ActiveLr = LR_REBEL;
 				s_ActiveLrGroup = GetLrGroupFromLrGame(LR_REBEL);
 				

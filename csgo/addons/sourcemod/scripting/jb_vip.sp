@@ -24,7 +24,6 @@ public Plugin myinfo =
 };
 
 VipMode vips[MAXPLAYERS + 1] = VM_None;
-
 Handle DB = INVALID_HANDLE;
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
@@ -54,8 +53,8 @@ public void OnPluginStart()
 	
 	PrintToServer("Connection to AdminVip database successful");
 	
-	RegAdminCmd("sm_addvip", CMD_AddVip, ADMFLAG_CUSTOM1, "Add VIP");
-	RegAdminCmd("sm_addextravip", CMD_AddExtraVip, ADMFLAG_CUSTOM1, "Add ExtraVIP");
+	RegAdminCmd("sm_addvip", CMDAddVip, ADMFLAG_CUSTOM1, "Add VIP");
+	RegAdminCmd("sm_addextravip", CMDAddExtraVip, ADMFLAG_CUSTOM1, "Add ExtraVIP");
 	RegAdminCmd("sm_removevip", CMDRemoveVip, ADMFLAG_CUSTOM1, "Remove VIP");
 	
 	CreateTimer(60.0, TimerCallbackRemoveVip, INVALID_HANDLE, TIMER_REPEAT);
@@ -238,7 +237,7 @@ void RemoveFromDatabase(int client, const char[] steamid)
 	ReplyToCommand(client, "Removed from VIP");
 }
 
-public Action CMD_AddVip(int client, int args)
+public Action CMDAddVip(int client, int args)
 {
 	if (args < 1)
 	{
@@ -249,12 +248,12 @@ public Action CMD_AddVip(int client, int args)
 	char steamid[32];
 	GetCmdArgString(steamid, sizeof(steamid));
 	
-	AddToDatabase(client, steamid, "s", 30);
+	AddToDatabase(client, steamid, "s", 43200);
 	
 	return Plugin_Handled;
 }
 
-public Action CMD_AddExtraVip(int client, int args)
+public Action CMDAddExtraVip(int client, int args)
 {
 	if (args < 1)
 	{
@@ -264,9 +263,7 @@ public Action CMD_AddExtraVip(int client, int args)
 	
 	char steamid[32];
 	GetCmdArgString(steamid, sizeof(steamid));
-	
-	AddToDatabase(client, steamid, "t", 30);
-	
+	AddToDatabase(client, steamid, "t", 43200);
 	return Plugin_Handled;
 }
 
@@ -280,7 +277,6 @@ public Action CMDRemoveVip(int client, int args)
 	
 	char steamid[32];
 	GetCmdArgString(steamid, sizeof(steamid));
-	
 	RemoveFromDatabase(client, steamid);
 	return Plugin_Handled;
 }
@@ -303,15 +299,16 @@ public Action TimerCallbackRemoveVip(Handle timer, any data)
 	int currentTime = GetTime();
 	while (SQL_FetchRow(queryH))
 	{
-		int length = SQL_FetchInt(queryH, 4);
+		int length = SQL_FetchInt(queryH, 3);
 		if (length == 0)
 			continue;
-		int rawTime = SQL_FetchInt(queryH, 5);
-		if (rawTime + length * 60 > currentTime)
+		int rawTime = SQL_FetchInt(queryH, 4);
+		if (rawTime + length * 60 < currentTime)
 		{
 			// Remove the entry
 			char steamid[32];
-			SQL_FetchString(queryH, 1, steamid, sizeof(steamid));
+			SQL_FetchString(queryH, 0, steamid, sizeof(steamid));
+			PrintToServer(steamid);
 			Format(query, sizeof(query), "DELETE FROM AdminVip WHERE steamid='%s'", steamid);
 			Handle queryRemoveH = SQL_Query(DB, query);
 			if (queryRemoveH == INVALID_HANDLE)
