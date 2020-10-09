@@ -57,10 +57,20 @@ public void OnPluginStart()
 	RegAdminCmd("sm_addvip", CMD_AddVip, ADMFLAG_CUSTOM1, "Add VIP");
 	RegAdminCmd("sm_addextravip", CMD_AddExtraVip, ADMFLAG_CUSTOM1, "Add ExtraVIP");
 	RegAdminCmd("sm_removevip", CMDRemoveVip, ADMFLAG_CUSTOM1, "Remove VIP");
+	
+	CreateTimer(60.0, TimerCallbackRemoveVip, INVALID_HANDLE, TIMER_REPEAT);
+	
+	for (int i = 1; i <= MaxClients; ++i)
+		if (IsClientInGame(i))
+			OnClientPostAdminCheck(i);
 }
 
-public void OnClientAuthorized(int client, const char[] auth)
+public void OnClientPostAdminCheck(int client)
 {
+	char auth[32];
+	GetClientAuthId(client, AuthId_Steam2, auth, sizeof(auth));
+	ReplaceString(auth, sizeof(auth), ":", ""); // Remove all ':' characters (bcs Hicoria sucks)
+	
 	char query[150];
 	Format(query, sizeof(query), "SELECT steamid, type FROM AdminVip WHERE steamid='%s'", auth);
 	
@@ -91,6 +101,7 @@ public void OnClientAuthorized(int client, const char[] auth)
 	{
 		vips[client] = VM_None;
 	}
+	
 }
 
 public Action OnPlayerHurtPost(Handle event, const char[] name, bool dontBroadcast)
@@ -164,10 +175,11 @@ public Action SayHook(int client, const char[] command, int args)
 void AddToDatabase(int client, char[] steamid, char[] type, int length)
 {
 	char time[32];
-	Format(time, sizeof(time), "%d/%m/%Y, %H:%M:%S", GetTime());
+	int rawTime = GetTime();
+	FormatTime(time, sizeof(time), "%d/%m/%Y, %H:%M:%S", rawTime);
 	
 	char query[300];
-	Format(query, sizeof(query), "INSERT INTO AdminVip (steamid, type, time, length) VALUES ('%s', '%s', '%s', '%d')", steamid, type, time, length);
+	Format(query, sizeof(query), "INSERT INTO AdminVip (steamid, type, time, length, raw_time) VALUES ('%s', '%s', '%s', '%d', '%i')", steamid, type, time, length, rawTime);
 	
 	Handle queryH = SQL_Query(DB, query);
 	if (queryH == INVALID_HANDLE)
@@ -197,9 +209,7 @@ bool IsSteamidInDatabase(const char[] steamid)
 	}
 	
 	if (SQL_FetchRow(queryH))
-	{
 		return true;
-	}
 	
 	return false;
 }
@@ -273,6 +283,46 @@ public Action CMDRemoveVip(int client, int args)
 	
 	RemoveFromDatabase(client, steamid);
 	return Plugin_Handled;
+}
+
+public Action TimerCallbackRemoveVip(Handle timer, any data)
+{
+	char query[256];
+	Format(query, sizeof(query), "SELECT * FROM AdminVip");
+	
+	Handle queryH = SQL_Query(DB, query);
+	if (queryH == INVALID_HANDLE)
+	{
+		char error[70];
+		SQL_GetError(DB, error, sizeof(error));
+		PrintToServer("Could not query message: %s", query);
+		PrintToServer("Error: %s", error);
+		return;
+	}
+	
+	int currentTime = GetTime();
+	while (SQL_FetchRow(queryH))
+	{
+		int length = SQL_FetchInt(queryH, 4);
+		if (length == 0)
+			continue;
+		int rawTime = SQL_FetchInt(queryH, 5);
+		if (rawTime + length * 60 > currentTime)
+		{
+			// Remove the entry
+			char steamid[32];
+			SQL_FetchString(queryH, 1, steamid, sizeof(steamid));
+			Format(query, sizeof(query), "DELETE FROM AdminVip WHERE steamid='%s'", steamid);
+			Handle queryRemoveH = SQL_Query(DB, query);
+			if (queryRemoveH == INVALID_HANDLE)
+			{
+				char error[70];
+				SQL_GetError(DB, error, sizeof(error));
+				PrintToServer("Could not query message: %s", query);
+				PrintToServer("Error: %s", error);
+			}
+		}
+	}
 }
 
 // native bool IsVip(int client);
