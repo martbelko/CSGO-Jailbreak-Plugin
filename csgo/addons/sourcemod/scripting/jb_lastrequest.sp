@@ -319,7 +319,7 @@ public void OnClientDisconnect(int client)
 		{
 			if (IsClientValid(s_LrPlayerT))
 				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
-			if (IsClientValid(s_LrPlayerT))
+			if (IsClientValid(s_LrPlayerCt))
 				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
 			ResetLr();
 		}
@@ -409,7 +409,7 @@ public Action OnPlayerDeathPost(Handle event, const char[] name, bool dontBroadc
 		{
 			if (IsClientValid(s_LrPlayerT))
 				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerT));
-			if (IsClientValid(s_LrPlayerT))
+			if (IsClientValid(s_LrPlayerCt))
 				ServerCommand("sm_beacon #%i", GetClientUserId(s_LrPlayerCt));
 			ResetLr();
 		}
