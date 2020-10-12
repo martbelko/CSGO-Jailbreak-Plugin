@@ -531,6 +531,8 @@ public Action TimerCallbackGunTossDeagleDropped(Handle timer, Handle kv)
 	int weapon = KvGetNum(kv, "weapon");
 	if (!IsClientValid(client) || !IsPlayerAlive(client))
 		return Plugin_Handled;
+	if (!IsValidEntity(weapon))
+		return Plugin_Handled;
 
 	float deaglePos[3];
 	GetEntPropVector(weapon, Prop_Data, "m_vecOrigin", deaglePos);

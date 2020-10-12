@@ -41,7 +41,7 @@ enum BoxMode
 
 #define MODEL_BALL "models/props/de_dust/hr_dust/dust_soccerball/dust_soccer_ball001.mdl"
 
-static int s_Warden = 0; // Active Warden client index
+static int s_Warden = -1; // Active Warden client index
 static WardenGame s_Wg = WG_NONE;
 static ArrayList s_Menus; // Vector to hold menus, when we want to roll back
 static ArrayList s_TeamA; // Vector to hold client indices of team A
@@ -106,7 +106,7 @@ public void OnClientDisconnect(int client)
 	if (client == s_Warden)
 	{
 		ResetWardenTimer();
-		s_Warden = 0;
+		s_Warden = -1;
 		PrintToChatAll("\x03 [JailBreak] \x04 Warden died: \x0C %N", client);
 	}
 }
@@ -142,8 +142,8 @@ public Action OnPlayerDeath(Handle event, const char[] name, bool dontBroadcast)
 	if (client == s_Warden)
 	{
 		ResetWardenTimer();
-		s_Warden = 0;
-		PrintToChatAll("\x03 [SM Warden] \x04 Warden died: \x0C %N", client);
+		s_Warden = -1;
+		PrintToChatAll("\x03 [URNA Warden] \x04 Warden died: \x0C %N", client);
 		RefreshName(client, GetClientTeam(client));
 	}
 	
@@ -154,8 +154,9 @@ public Action OnRoundStart(Handle event, const char[] name, bool dontBroadcast)
 {
 	s_Ball = -1;
 	int lastWarden = s_Warden;
-	s_Warden = 0;
-	RefreshName(lastWarden, GetClientTeam(lastWarden));
+	s_Warden = -1;
+	if (IsClientValid(lastWarden))
+		RefreshName(lastWarden, GetClientTeam(lastWarden));
 	s_BoxMode = BM_NONE;
 	s_Wg = WG_NONE;
 	ClearArray(s_TeamA);
@@ -171,15 +172,15 @@ public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
 
 public Action CMDWarden(int client, int args)
 {
-	if (s_Warden == 0)
+	if (s_Warden == -1)
 	{
 		if (GetClientTeam(client) != CS_TEAM_CT)
 		{
-			ReplyToCommand(client, "[SM Warden] Only CTs can be warden");
+			ReplyToCommand(client, "[URNA Warden] Only CTs can be warden");
 		}
 		else if (!IsPlayerAlive(client))
 		{
-			ReplyToCommand(client, "[SM Warden] Only alive player can be wardens");
+			ReplyToCommand(client, "[URNA Warden] Only alive player can be wardens");
 		}
 		else
 		{
@@ -187,13 +188,13 @@ public Action CMDWarden(int client, int args)
 			s_WardenTimer = CreateTimer(60.0, TimerCallbackWarden, client, TIMER_REPEAT);
 			s_Warden = client;
 			PrintCenterTextAll("%N is current Warden", s_Warden);
-			ReplyToCommand(client, "[SM Warden] You are Warden now! !wmenu to open warden menu, !uw (!unwarden) to leave Warden, !o (!open) to open cells");
+			ReplyToCommand(client, "[URNA Warden] You are Warden now! !wmenu to open warden menu, !uw (!unwarden) to leave Warden, !o (!open) to open cells");
 			RefreshName(client, CS_TEAM_CT);
 		}
 	}
 	else
 	{
-		ReplyToCommand(client, "[SM Warden] Sorry, %N is current Warden", s_Warden);
+		ReplyToCommand(client, "[URNA Warden] Sorry, %N is current Warden", s_Warden);
 	}
 	
 	return Plugin_Handled;
@@ -213,13 +214,13 @@ public Action CMDUnwarden(int client, int args)
 	{
 		ResetWardenTimer();
 		PrintCenterTextAll("%N is not Warden anymore", s_Warden);
-		ReplyToCommand(client, "[SM Warden] You are not Warden anymore");
-		s_Warden = 0;
+		ReplyToCommand(client, "[URNA Warden] You are not Warden anymore");
+		s_Warden = -1;
 		RefreshName(client, CS_TEAM_CT);
 	}
 	else
 	{
-		ReplyToCommand(client, "[SM Warden] You are not Warden");
+		ReplyToCommand(client, "[URNA Warden] You are not Warden");
 	}
 	
 	return Plugin_Handled;
@@ -257,7 +258,7 @@ void DisplayWardenMenu(int client)
 	}
 	else
 	{
-		ReplyToCommand(client, "[SM Warden] You need to be Warden to use this command");
+		ReplyToCommand(client, "[URNA Warden] You need to be Warden to use this command");
 	}
 }
 
@@ -412,7 +413,7 @@ public int MenuCallbackWardenGames(Menu menu, MenuAction action, int param1, int
 			if (StrEqual(itemName, "hns"))
 			{
 				s_Wg = WG_HNS;
-				PrintToChatAll(" \x03 [SM Warden] \x04 Warden \x0C %N \x04 has selected the game Hide and Seek", s_Warden);
+				PrintToChatAll(" \x03 [URNA Warden] \x04 Warden \x0C %N \x04 has selected the game Hide and Seek", s_Warden);
 				// TODO: Implement HNS
 				for (int i = 1; i <= MaxClients; ++i)
 				{
