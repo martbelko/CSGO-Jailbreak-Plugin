@@ -40,8 +40,8 @@ public void OnPluginStart()
 {
 	CreateConVar("admingrab_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_SPONLY);
 
-	RegAdminCmd("sm_grab", Command_Grab_Toggle, ADMFLAG_SLAY, "Grab an Object");
-	RegAdminCmd("sm_throw", Command_Throw, ADMFLAG_SLAY, "Throw an Object");
+	RegAdminCmd("sm_grab", Command_Grab_Toggle, ADMFLAG_CUSTOM1, "Grab an Object");
+	RegAdminCmd("sm_throw", Command_Throw, ADMFLAG_CUSTOM1, "Throw an Object");
 
 	HookEvent("player_death", OnPlayerSpawn);
 	HookEvent("player_spawn", OnPlayerSpawn);
