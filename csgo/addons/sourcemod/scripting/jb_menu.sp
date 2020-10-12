@@ -617,7 +617,7 @@ public Action CMDMenu(int client, int args)
 		
 	if (!IsPlayerAlive(client))
 	{
-		ReplyToCommand(client, "[URNA Menu] Sorry, you can use this command only when you are alive");
+		ReplyToCommand(client, "[URNA Shop] Sorry, you can use this command only when you are alive");
 		return Plugin_Handled;
 	}
 	
@@ -632,13 +632,13 @@ public Action CMDShop(int client, int args)
 		
 	if (!IsPlayerAlive(client))
 	{
-		ReplyToCommand(client, "[URNA Menu] Sorry, you can use this command only when you are alive");
+		ReplyToCommand(client, "[URNA Shop] Sorry, you can use this command only when you are alive");
 		return Plugin_Handled;
 	}
 	
 	if (!s_ShopEnabled)
 	{
-		ReplyToCommand(client, "[URNA SHOP] Shop has been disabled after 2 minutes");
+		ReplyToCommand(client, "[URNA Shop] Shop has been disabled after 2 minutes");
 		return Plugin_Handled;
 	}
 	
@@ -660,7 +660,7 @@ public Action CMDSetPoints(int client, int argc)
 {
 	if (argc != 2)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_setpoints <target> <number of points>");
+		ReplyToCommand(client, "[URNA Shop] Usage: sm_setpoints <target> <number of points>");
 		return Plugin_Handled;
 	}
 	
@@ -672,7 +672,7 @@ public Action CMDSetPoints(int client, int argc)
 	int targetCount = ProcessTargetString(buffer, client, targetList, MAXPLAYERS, COMMAND_FILTER_CONNECTED, targetName, MAX_NAME_LENGTH, tn_is_ml);
 	if (targetCount <= 0)
 	{
-		ReplyToCommand(client, "[SM] No matching clients were found");
+		ReplyToCommand(client, "[URNA Shop] No matching clients were found");
 		return Plugin_Handled;
 	}
 	

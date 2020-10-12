@@ -98,10 +98,6 @@ public void OnPluginStart()
 	RegAdminCmd("sm_closedoors", CMDCloseDoors, ADMFLAG_CHEATS, "Close Jailbreak doors");
 	RegAdminCmd("sm_visible", CMDVisible, ADMFLAG_CHEATS, "Make player visible");
 	RegAdminCmd("sm_invisible", CMDInvisible, ADMFLAG_CHEATS, "Make player invisible");
-	
-	for (int i = 1; i <= MaxClients; ++i)
-		if (IsClientInGame(i))
-			OnClientPutInServer(i);
 }
 
 public void OnPluginEnd()
@@ -196,7 +192,7 @@ public Action CMDInvisible(int client, int argc)
 {
 	if (argc != 1)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_invisible <target>");
+		ReplyToCommand(client, "[URNA] Usage: sm_invisible <target>");
 		return Plugin_Handled;
 	}
 	
@@ -208,14 +204,14 @@ public Action CMDInvisible(int client, int argc)
 	int targetCount = ProcessTargetString(buffer, client, targetList, MAXPLAYERS, COMMAND_FILTER_ALIVE | COMMAND_FILTER_CONNECTED, targetName, MAX_NAME_LENGTH, tn_is_ml);
 	if (targetCount <= 0)
 	{
-		ReplyToCommand(client, "[SM] No matching clients were found");
+		ReplyToCommand(client, "[URNA] No matching clients were found");
 		return Plugin_Handled;
 	}
 	
 	for (int i = 0; i < targetCount; ++i)
 	{
 		SetPlayerInvisible(targetList[i]);
-		ReplyToCommand(client, "[SM] %N is now invisible", targetList[i]);
+		ReplyToCommand(client, "[URNA] %N is now invisible", targetList[i]);
 	}
 	
 	return Plugin_Handled;
@@ -225,7 +221,7 @@ public Action CMDVisible(int client, int argc)
 {
 	if (argc != 1)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_visible <target>");
+		ReplyToCommand(client, "[URNA] Usage: sm_visible <target>");
 		return Plugin_Handled;
 	}
 	
@@ -237,14 +233,14 @@ public Action CMDVisible(int client, int argc)
 	int targetCount = ProcessTargetString(buffer, client, targetList, MAXPLAYERS, COMMAND_FILTER_ALIVE | COMMAND_FILTER_CONNECTED, targetName, MAX_NAME_LENGTH, tn_is_ml);
 	if (targetCount <= 0)
 	{
-		ReplyToCommand(client, "[SM] No matching clients were found");
+		ReplyToCommand(client, "[URNA] No matching clients were found");
 		return Plugin_Handled;
 	}
 	
 	for (int i = 0; i < targetCount; ++i)
 	{
 		SetPlayerVisible(targetList[i]);
-		ReplyToCommand(client, "[SM] %N is now visible", targetList[i]);
+		ReplyToCommand(client, "[URNA] %N is now visible", targetList[i]);
 	}
 	
 	return Plugin_Handled;
@@ -760,7 +756,7 @@ public int __EmitSoundToAllAny(Handle plugin, int numParams)
 			ClientCommand(i, command);
 }
 
-public bool _DI_TraceFilter(int entity, int contentsMask, any client)
+bool _DI_TraceFilter(int entity, int contentsMask, any client)
 {
 	if (entity == client)
 		return false;

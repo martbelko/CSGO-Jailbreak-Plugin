@@ -605,27 +605,27 @@ public Action CMDLastRequest(int client, int args)
 	}
 	if (GetClientTeam(client) != CS_TEAM_T)
 	{
-		ReplyToCommand(client, "[Jailbreak Last Request] You can use this commnad only when you are on T side");
+		ReplyToCommand(client, "[URNA Last Request] You can use this commnad only when you are on T side");
 		return Plugin_Handled;
 	}
 	if (!IsPlayerAlive(client))
 	{
-		ReplyToCommand(client, "[Jailbreak Last Request] You can use this commnad only when you are alive");
+		ReplyToCommand(client, "[URNA Last Request] You can use this commnad only when you are alive");
 		return Plugin_Handled;
 	}
 	if (GetNumberOfPlayers(CS_TEAM_T, true) != 1)
 	{
-		ReplyToCommand(client, "[Jailbreak Last Request] You can use this command only if you are the last alive on T side");
+		ReplyToCommand(client, "[URNA Last Request] You can use this command only if you are the last alive on T side");
 		return Plugin_Handled;
 	}
 	if (GetNumberOfPlayers(CS_TEAM_CT, true) == 0)
 	{
-		ReplyToCommand(client, "[Jailbreak Last Request] You cannot use this command, nobody is alive on CT side");
+		ReplyToCommand(client, "[URNA Last Request] You cannot use this command, nobody is alive on CT side");
 		return Plugin_Handled;
 	}
 	if (s_ActiveLr != LR_NO_LR)
 	{
-		ReplyToCommand(client, "[Jailbreak Last Request] Last Request is still in progress");
+		ReplyToCommand(client, "[URNA Last Request] Last Request is still in progress");
 		return Plugin_Handled;
 	}
 	
