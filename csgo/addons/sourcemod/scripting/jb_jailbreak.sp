@@ -105,13 +105,12 @@ public void OnClientPutInServer(int client)
 	SDKHook(client, SDKHook_WeaponEquipPost, OnWeaponEquipPost);
 	SDKHook(client, SDKHook_SpawnPost, OnPlayerSpawnPost);
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
-	SDKHook(client, SDKHook_PostThinkPost, OnPostThinkPost);
 	
 	GetClientName(client, s_OriginalNames[client], MAX_NAME_LENGTH);
 }
 
 public Action AltJoin(int client, const char[] command, int argc)
-{	
+{
 	char arg[8];
 	GetCmdArg(1, arg, sizeof(arg));
 	int teamJoin = StringToInt(arg);
@@ -126,14 +125,16 @@ public Action AltJoin(int client, const char[] command, int argc)
 		if (IsAdmin(client))
 		{
 			if (IsPlayerAlive(client))
-				SlapPlayer(client, GetClientHealth(client), false); // Restart round if last alive player join specs
-
+				ForcePlayerSuicide(client); // Restart round if last alive player join specs
+			
+			ChangeClientTeam(client, CS_TEAM_SPECTATOR);
 			return Plugin_Continue;
 		}
 		
 		PrintCenterText(client, "You can't join spectator");
 		return Plugin_Handled;
 	}
+	
 	if (teamJoin == CS_TEAM_CT)
 	{
 		int team = GetClientTeam(client);
@@ -141,6 +142,7 @@ public Action AltJoin(int client, const char[] command, int argc)
 		int ctPlayers = GetNumberOfPlayers(CS_TEAM_CT, false) + 1;
 		if (ctPlayers == 1) // If CT team is empty
 		{
+			ChangeClientTeam(client, CS_TEAM_CT);
 			return Plugin_Continue;
 		}
 		
@@ -155,9 +157,7 @@ public Action AltJoin(int client, const char[] command, int argc)
 		}
 	}
 	
-	if (IsPlayerAlive(client))
-		SlapPlayer(client, GetClientHealth(client), false); // Restart round if last alive player join specs
-
+	ChangeClientTeam(client, teamJoin);
 	return Plugin_Continue;
 }
 
@@ -296,7 +296,9 @@ public Action OnPlayerTeamPre(Handle event, const char[] name_t, bool dontBroadc
 public Action OnFullConnectPost(Handle event, const char[] name_t, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	CS_SwitchTeam(client, CS_TEAM_T);
+	ChangeClientTeam(client, CS_TEAM_T);
+	
+	return Plugin_Continue;
 }
 
 public Action OnPlayerSpawnPost(int client)
@@ -365,11 +367,6 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	}
 	
 	return Plugin_Continue;
-}
-
-public void OnPostThinkPost(int client)
-{
-	SetEntProp(client, Prop_Send, "m_iAddonBits", 0);
 }
 
 public Action OnWeaponCanUse(int client, int weapon)
