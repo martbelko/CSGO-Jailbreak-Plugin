@@ -47,6 +47,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 	CreateNative("IsRebel", __IsRebel);
 	CreateNative("RefreshName", __RefreshName);
 	CreateNative("GetRules", __GetRules);
+	CreateNative("GetOriginalName", __GetOriginalName);
 
 	RegPluginLibrary("jb_jailbreak.inc");
 	return APLRes_Success;
@@ -531,4 +532,12 @@ public int __GetRules(Handle plugin, int argc)
 		int length = GetNativeCell(3);
 		SetNativeString(2, RULES_STRING, length);
 	}
+}
+
+// native const char[] GetOriginalName(int client, char[] name, int maxLength);
+public int __GetOriginalName(Handle plugin, int argc)
+{
+	int client = GetNativeCell(1);
+	int length = GetNativeCell(3);
+	SetNativeString(2, s_OriginalNames[client], length);
 }
