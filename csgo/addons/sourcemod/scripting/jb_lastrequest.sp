@@ -259,7 +259,6 @@ Action StartLrChickenFight(Handle timer, any arg)
 
 Action StartLrRebel(Handle timer, any arg)
 {
-	PrintToChatAll("WTF");
 	int tPlayer = GetPlayerInLrFromTeam(CS_TEAM_T);
 	SetEntityHealth(tPlayer, 200);
 	SetPlayerArmor(tPlayer, 100);
