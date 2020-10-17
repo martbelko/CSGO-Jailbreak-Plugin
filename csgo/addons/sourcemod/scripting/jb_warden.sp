@@ -10,6 +10,7 @@
 #include <cstrike>
 #include <sdkhooks>
 #include <clientprefs>
+#include <smlib/strings>
 
 #include <jb_core>
 #include <jb_jailbreak>
@@ -136,27 +137,50 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	return Plugin_Continue;
 }
 
-public Action OnPlayerDeath(Handle event, const char[] name, bool dontBroadcast)
+public Action OnPlayerDeath(Handle event, const char[] eventName, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	if (!IsClientValid(client))
+	{
+		return Plugin_Handled;
+	}
+	
 	if (client == s_Warden)
 	{
+		char name[MAX_NAME_LENGTH];
+		GetClientName(s_Warden, name, sizeof(name));
+		if (String_StartsWith(name, "WARDEN "))
+		{
+			char newName[MAX_NAME_LENGTH];
+			strcopy(newName, sizeof(newName), name[7]);
+			SetClientName(s_Warden, newName);
+		}
+		
 		ResetWardenTimer();
 		s_Warden = -1;
 		PrintToChatAll("\x03 [URNA Warden] \x04 Warden died: \x0C %N", client);
-		RefreshName(client, GetClientTeam(client));
 	}
 	
 	return Plugin_Handled;
 }
 
-public Action OnRoundStart(Handle event, const char[] name, bool dontBroadcast)
+public Action OnRoundStart(Handle event, const char[] eventName, bool dontBroadcast)
 {
+	if (IsClientValid(s_Warden))
+	{
+		char name[MAX_NAME_LENGTH];
+		GetClientName(s_Warden, name, sizeof(name));
+		if (String_StartsWith(name, "WARDEN "))
+		{
+			char newName[MAX_NAME_LENGTH];
+			strcopy(newName, sizeof(newName), name[7]);
+			SetClientName(s_Warden, newName);
+		}
+	}
+	
 	s_Ball = -1;
 	int lastWarden = s_Warden;
 	s_Warden = -1;
-	if (IsClientValid(lastWarden))
-		RefreshName(lastWarden, GetClientTeam(lastWarden));
 	s_BoxMode = BM_NONE;
 	s_Wg = WG_NONE;
 	ClearArray(s_TeamA);
@@ -189,7 +213,12 @@ public Action CMDWarden(int client, int args)
 			s_Warden = client;
 			PrintCenterTextAll("%N is current Warden", s_Warden);
 			ReplyToCommand(client, "[URNA Warden] You are Warden now! !wmenu to open warden menu, !uw (!unwarden) to leave Warden, !o (!open) to open cells");
-			RefreshName(client, CS_TEAM_CT);
+			
+			char name[MAX_NAME_LENGTH];
+			GetClientName(client, name, sizeof(name));
+			char newName[MAX_NAME_LENGTH];
+			Format(newName, sizeof(newName), "WARDEN %s", name);
+			SetClientName(client, newName);
 		}
 	}
 	else
@@ -216,7 +245,14 @@ public Action CMDUnwarden(int client, int args)
 		PrintCenterTextAll("%N is not Warden anymore", s_Warden);
 		ReplyToCommand(client, "[URNA Warden] You are not Warden anymore");
 		s_Warden = -1;
-		RefreshName(client, CS_TEAM_CT);
+		char name[MAX_NAME_LENGTH];
+		GetClientName(client, name, sizeof(name));
+		if (String_StartsWith(name, "WARDEN "))
+		{
+			char newName[MAX_NAME_LENGTH];
+			strcopy(newName, sizeof(newName), name[7]);
+			SetClientName(client, newName);
+		}
 	}
 	else
 	{
