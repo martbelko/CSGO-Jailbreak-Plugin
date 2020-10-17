@@ -17,6 +17,7 @@
 #include <jb_vip>
 #include <jb_menu>
 #include <jb_jailbreak>
+#include <BanSystem>
 
 #pragma newdecls required
 
@@ -45,9 +46,7 @@ static Handle s_MuteTimer = INVALID_HANDLE;
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 {
 	CreateNative("IsRebel", __IsRebel);
-	CreateNative("RefreshName", __RefreshName);
 	CreateNative("GetRules", __GetRules);
-	CreateNative("GetOriginalName", __GetOriginalName);
 
 	RegPluginLibrary("jb_jailbreak.inc");
 	return APLRes_Success;
@@ -55,7 +54,6 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 
 public void OnPluginStart()
 {
-	HookEvent("player_team", OnPlayerTeamPre, EventHookMode_Pre);
 	HookEvent("player_connect_full", OnFullConnectPost, EventHookMode_Post);
 	HookEvent("round_start", OnRoundStartPost, EventHookMode_Pre);
 	HookEvent("player_hurt", OnPlayerHurt, EventHookMode_Post);
@@ -138,6 +136,14 @@ public Action AltJoin(int client, const char[] command, int argc)
 	
 	if (teamJoin == CS_TEAM_CT)
 	{
+		char auth[32];
+		GetClientAuthId(client, AuthId_Steam2, auth, sizeof(auth));
+		if (IsBanned(auth, "", 0))
+		{
+			PrintCenterText(client, "Máš CT ban");
+			return Plugin_Handled;
+		}
+		
 		int team = GetClientTeam(client);
 		int tPlayers = GetNumberOfPlayers(CS_TEAM_T, false);
 		int ctPlayers = GetNumberOfPlayers(CS_TEAM_CT, false) + 1;
@@ -243,55 +249,10 @@ public Action OnPlayerDeath(Handle event, const char[] name, bool dontBroadcast)
 {
 	int victim = GetClientOfUserId(GetEventInt(event, "userid"));
 	if (IsClientValid(victim) && !IsAdmin(victim))
+	{
 		SetClientListeningFlags(victim, VOICE_MUTED);
-}
-
-void GetJailbreakName(int client, int team, char[] name, int size)
-{
-	bool warden = false;
-	if (team == CS_TEAM_T)
-	{
-		StrCat(name, size, "VÄZEŇ ");
+		PrintToChat(victim, " \x04 Si mutnutý do ďalšieho respawnu");
 	}
-	else if (team == CS_TEAM_CT)
-	{
-		if (GetWarden() == client)
-		{
-			StrCat(name, size, "WARDEN ");
-			warden = true;
-		}
-		else
-			StrCat(name, size, "DOZORCA ");
-	}
-	else if (team == CS_TEAM_SPECTATOR)
-	{
-		StrCat(name, size, "DIVÁK ");
-	}
-	
-	if (!warden)
-	{
-		char buffer[5];
-		IntToString(client, buffer, sizeof(buffer));
-		StrCat(name, size, buffer);
-		StrCat(name, size, " ");
-	}
-	
-	StrCat(name, size, s_OriginalNames[client]);
-}
-
-public Action OnPlayerTeamPre(Handle event, const char[] name_t, bool dontBroadcast)
-{
-	if (GetEventInt(event, "disconnect"))
-		return Plugin_Handled;
-	
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	int team = GetEventInt(event, "team");
-	
-	char name[MAX_NAME_LENGTH];
-	GetJailbreakName(client, team, name, sizeof(name));
-	SetClientName(client, name);
-	
-	return Plugin_Continue;
 }
 
 public Action OnFullConnectPost(Handle event, const char[] name_t, bool dontBroadcast)
@@ -299,7 +260,25 @@ public Action OnFullConnectPost(Handle event, const char[] name_t, bool dontBroa
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	ChangeClientTeam(client, CS_TEAM_T);
 	
+	CreateTimer(1.0, TimerCallbackChangeClan, GetClientUserId(client));
+	
 	return Plugin_Continue;
+}
+
+public Action TimerCallbackChangeClan(Handle timer, int userid)
+{
+	int client = GetClientOfUserId(userid);
+	if (IsClientValid(client))
+	{
+		if (IsAdmin(client))
+			CS_SetClientClanTag(client, "[URNA]");
+		else if (IsClientExtraVip(client))
+			CS_SetClientClanTag(client, "ExtraVIP");
+		else if (IsClientVip(client))
+			CS_SetClientClanTag(client, "VIP");
+		else
+			CS_SetClientClanTag(client, "");
+	}
 }
 
 public Action OnPlayerSpawnPost(int client)
@@ -477,6 +456,10 @@ public Action TImerCallbackGiveWeapons(Handle timer, int client)
 		if (GetClientTeam(client) == CS_TEAM_T)
 		{
 			GivePlayerItem(client, "weapon_fists");
+			if (IsClientExtraVip(client))
+				GivePlayerItem(client, "weapon_knife");
+			else if (IsClientVip(client))
+				GivePlayerItem(client, "weapon_hammer");
 		}
 		else
 		{
@@ -485,6 +468,10 @@ public Action TImerCallbackGiveWeapons(Handle timer, int client)
 			GivePlayerItem(client, "weapon_usp_silencer");
 			GivePlayerItem(client, "weapon_m4a1_silencer");
 			SetPlayerArmor(client, 100);
+			if (IsClientExtraVip(client))
+				SetPlayerHelmet(client, true);
+			if (IsClientVip(client))
+				GivePlayerItem(client, "weapon_healthshot");
 		}
 	}
 }
@@ -502,21 +489,6 @@ public int __IsRebel(Handle plugin, int numParams)
 	return g_Rebels[client];
 }
 
-// void RefreshName(int client, int team);
-public int __RefreshName(Handle plugin, int numParams)
-{
-	int client = GetNativeCell(1);
-	if (!IsClientValid(client))
-		return 0;	
-		
-	int team = GetNativeCell(2);
-	char name[MAX_NAME_LENGTH];
-	GetJailbreakName(client, team, name, sizeof(name));
-	SetClientName(client, name);
-	
-	return 0;
-}
-
 // void GetRules(int client, char[] rules, int maxLength);
 public int __GetRules(Handle plugin, int argc)
 {
@@ -532,12 +504,4 @@ public int __GetRules(Handle plugin, int argc)
 		int length = GetNativeCell(3);
 		SetNativeString(2, RULES_STRING, length);
 	}
-}
-
-// native const char[] GetOriginalName(int client, char[] name, int maxLength);
-public int __GetOriginalName(Handle plugin, int argc)
-{
-	int client = GetNativeCell(1);
-	int length = GetNativeCell(3);
-	SetNativeString(2, s_OriginalNames[client], length);
 }
