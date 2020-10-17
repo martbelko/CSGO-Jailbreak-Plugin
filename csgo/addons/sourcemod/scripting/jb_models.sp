@@ -200,7 +200,7 @@ void LoadModelsGroups(const char[] path, ArrayList& modelArrayList)
 					else if (StrEqual(tempStr, "evip"))
 						temp.vipMode = MVM_EVIP;
 					else if (StrEqual(tempStr, "admin"))
-						temp.vipMode = MVM_VIP;
+						temp.vipMode = MVM_ADMIN;
 					else if (String_StartsWith(tempStr, "STEAM_"))
 					{
 						strcopy(temp.auth, sizeof(temp.auth), tempStr);
