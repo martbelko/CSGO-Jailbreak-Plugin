@@ -32,165 +32,14 @@ public Plugin myinfo =
 #define PATH_MODELS_DOWNLOAD "configs/modelsdownload.ini"
 #define PATH_MODELS_GROUPS "configs/modelsgroups.ini"
 
-static char anarchistModelsT[][] = 
+enum ModelVipMode
 {
-	"models/player/custom_player/legacy/tm_anarchist.mdl",
-	"models/player/custom_player/legacy/tm_anarchist_variantA.mdl",
-	"models/player/custom_player/legacy/tm_anarchist_variantB.mdl",
-	"models/player/custom_player/legacy/tm_anarchist_variantC.mdl",
-	"models/player/custom_player/legacy/tm_anarchist_variantD.mdl"
-};
-
-static char balkanModelsT[][] = 
-{ 
-	"models/player/custom_player/legacy/tm_balkan_variantA.mdl",
-	"models/player/custom_player/legacy/tm_balkan_variantB.mdl",
-	"models/player/custom_player/legacy/tm_balkan_variantC.mdl",
-	"models/player/custom_player/legacy/tm_balkan_variantD.mdl",
-	"models/player/custom_player/legacy/tm_balkan_variantE.mdl"
-};
-
-static char leetModelsT[][] = 
-{ 	
-	"models/player/custom_player/legacy/tm_leet_variantA.mdl",
-	"models/player/custom_player/legacy/tm_leet_variantB.mdl",
-	"models/player/custom_player/legacy/tm_leet_variantC.mdl",
-	"models/player/custom_player/legacy/tm_leet_variantD.mdl",
-	"models/player/custom_player/legacy/tm_leet_variantE.mdl"
-};
-
-static char phoenixModelsT[][] = 
-{ 
-	"models/player/custom_player/legacy/tm_phoenix.mdl",
-	"models/player/custom_player/legacy/tm_phoenix_heavy.mdl",	
-	"models/player/custom_player/legacy/tm_phoenix_variantA.mdl",
-	"models/player/custom_player/legacy/tm_phoenix_variantB.mdl",
-	"models/player/custom_player/legacy/tm_phoenix_variantC.mdl",
-	"models/player/custom_player/legacy/tm_phoenix_variantD.mdl"
-};
-
-static char pirateModelsT[][] = 
-{ 
-	"models/player/custom_player/legacy/tm_pirate.mdl",	
-	"models/player/custom_player/legacy/tm_pirate_variantA.mdl",
-	"models/player/custom_player/legacy/tm_pirate_variantB.mdl",
-	"models/player/custom_player/legacy/tm_pirate_variantC.mdl",
-	"models/player/custom_player/legacy/tm_pirate_variantD.mdl"
-};
-
-static char professionalModelsT[][] = 
-{ 
-	"models/player/custom_player/legacy/tm_professional.mdl",	
-	"models/player/custom_player/legacy/tm_professional_var1.mdl",
-	"models/player/custom_player/legacy/tm_professional_var2.mdl",
-	"models/player/custom_player/legacy/tm_professional_var3.mdl",
-	"models/player/custom_player/legacy/tm_professional_var4.mdl"
-};
-
-static char separatistModelsT[][] = 
-{ 
-	"models/player/custom_player/legacy/tm_separatist.mdl",	
-	"models/player/custom_player/legacy/tm_separatist_variantA.mdl",
-	"models/player/custom_player/legacy/tm_separatist_variantB.mdl",
-	"models/player/custom_player/legacy/tm_separatist_variantC.mdl",
-	"models/player/custom_player/legacy/tm_separatist_variantD.mdl"
-};
-
-static char fbiModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_fbi.mdl",
-	"models/player/custom_player/legacy/ctm_fbi_variantA.mdl",
-	"models/player/custom_player/legacy/ctm_fbi_variantB.mdl",
-	"models/player/custom_player/legacy/ctm_fbi_variantC.mdl",
-	"models/player/custom_player/legacy/ctm_fbi_variantD.mdl"
-};
-
-static char gignModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_gign.mdl",
-	"models/player/custom_player/legacy/ctm_gign_variantA.mdl",
-	"models/player/custom_player/legacy/ctm_gign_variantB.mdl",
-	"models/player/custom_player/legacy/ctm_gign_variantC.mdl",
-	"models/player/custom_player/legacy/ctm_gign_variantD.mdl"	
-};
-
-static char gsg9ModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_gsg9.mdl",
-	"models/player/custom_player/legacy/ctm_gsg9_variantA.mdl",
-	"models/player/custom_player/legacy/ctm_gsg9_variantB.mdl",
-	"models/player/custom_player/legacy/ctm_gsg9_variantC.mdl",
-	"models/player/custom_player/legacy/ctm_gsg9_variantD.mdl"	
-};
-
-static char idfModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_idf.mdl",
-	"models/player/custom_player/legacy/ctm_idf_variantA.mdl",
-	"models/player/custom_player/legacy/ctm_idf_variantB.mdl",
-	"models/player/custom_player/legacy/ctm_idf_variantC.mdl",
-	"models/player/custom_player/legacy/ctm_idf_variantD.mdl",	
-	"models/player/custom_player/legacy/ctm_idf_variantE.mdl",
-	"models/player/custom_player/legacy/ctm_idf_variantF.mdl"	
-};
-
-static char sasModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_sas.mdl",
-	"models/player/custom_player/legacy/ctm_sas_variantA.mdl",
-	"models/player/custom_player/legacy/ctm_sas_variantB.mdl",
-	"models/player/custom_player/legacy/ctm_sas_variantC.mdl",
-	"models/player/custom_player/legacy/ctm_sas_variantD.mdl",	
-	"models/player/custom_player/legacy/ctm_sas_variantE.mdl"	
-};
-
-static char st6ModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_st6.mdl",
-	"models/player/custom_player/legacy/ctm_st6_variantA.mdl",
-	"models/player/custom_player/legacy/ctm_st6_variantB.mdl",
-	"models/player/custom_player/legacy/ctm_st6_variantC.mdl",
-	"models/player/custom_player/legacy/ctm_st6_variantD.mdl"
-};
-
-static char swatModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_swat.mdl",
-	"models/player/custom_player/legacy/ctm_swat_variantA.mdl",
-	"models/player/custom_player/legacy/ctm_swat_variantB.mdl",
-	"models/player/custom_player/legacy/ctm_swat_variantC.mdl",
-	"models/player/custom_player/legacy/ctm_swat_variantD.mdl"
-};
-
-static char AgentModelsT[][] = 
-{
-	"models/player/custom_player/legacy/tm_balkan_variantf.mdl",	
-	"models/player/custom_player/legacy/tm_balkan_variantg.mdl",
-	"models/player/custom_player/legacy/tm_balkan_varianth.mdl",
-	"models/player/custom_player/legacy/tm_balkan_varianti.mdl",
-	"models/player/custom_player/legacy/tm_balkan_variantj.mdl",
-	"models/player/custom_player/legacy/tm_leet_variantf.mdl",
-	"models/player/custom_player/legacy/tm_leet_variantg.mdl",
-	"models/player/custom_player/legacy/tm_leet_varianth.mdl",
-	"models/player/custom_player/legacy/tm_leet_varianti.mdl",	
-	"models/player/custom_player/legacy/tm_phoenix_variantf.mdl",
-	"models/player/custom_player/legacy/tm_phoenix_variantg.mdl",
-	"models/player/custom_player/legacy/tm_phoenix_varianth.mdl"
-};
-
-static char AgentModelsCT[][] = 
-{
-	"models/player/custom_player/legacy/ctm_fbi_variante.mdl",
-	"models/player/custom_player/legacy/ctm_fbi_variantf.mdl",
-	"models/player/custom_player/legacy/ctm_fbi_variantg.mdl",
-	"models/player/custom_player/legacy/ctm_fbi_varianth.mdl",
-	"models/player/custom_player/legacy/ctm_st6_variante.mdl",	
-	"models/player/custom_player/legacy/ctm_st6_variantg.mdl",
-	"models/player/custom_player/legacy/ctm_st6_varianti.mdl",
-	"models/player/custom_player/legacy/ctm_st6_variantk.mdl",
-	"models/player/custom_player/legacy/ctm_st6_variantm.mdl",
-	"models/player/custom_player/legacy/ctm_sas_variantf.mdl"	
-};
+	MVM_ALL = 0,
+	MVM_VIP,
+	MVM_EVIP,
+	MVM_ADMIN,
+	MVM_CUSTOM
+}
 
 enum struct Model
 {
@@ -198,7 +47,7 @@ enum struct Model
 	char path[256];
 	char arms[256];
 	int team;
-	VipMode vipMode;
+	ModelVipMode vipMode;
 	char auth[32];
 }
 
@@ -207,26 +56,7 @@ static ArrayList s_ModelArrayList;
 static int s_PlayerTModelIndex[MAXPLAYERS + 1];
 static int s_PlayerCtModelIndex[MAXPLAYERS + 1];
 
-enum VipMode
-{
-	VM_ALL = 0,
-	VM_VIP,
-	VM_EVIP,
-	VM_ADMIN,
-	VM_CUSTOM
-}
-
-VipMode GetClientVipMode(int client)
-{
-	if (IsAdmin(client))
-			return VM_ADMIN;
-	if (IsClientExtraVip(client))
-		return VM_EVIP;
-	if (IsClientVip(client))
-		return VM_VIP;
-	return VM_ALL;
-}
-
+/*
 bool CanUseModel(int client, int modelIndex)
 {
 	Model mdl;
@@ -249,6 +79,7 @@ bool CanUseModel(int client, int modelIndex)
 		return false;
 	}
 }
+*/
 
 static char s_ModelDownloadPath[256];
 static char s_ModelGroupsPath[256];
@@ -363,17 +194,17 @@ void LoadModelsGroups(const char[] path, ArrayList& modelArrayList)
 					char tempStr[32];
 					KvGetString(kv, "auth", tempStr, sizeof(tempStr));
 					if (StrEqual(tempStr, "all"))
-						temp.vipMode = VM_ALL;
+						temp.vipMode = MVM_ALL;
 					else if (StrEqual(tempStr, "vip"))
-						temp.vipMode = VM_VIP;
+						temp.vipMode = MVM_VIP;
 					else if (StrEqual(tempStr, "evip"))
-						temp.vipMode = VM_EVIP;
+						temp.vipMode = MVM_EVIP;
 					else if (StrEqual(tempStr, "admin"))
-						temp.vipMode = VM_ADMIN;
+						temp.vipMode = MVM_VIP;
 					else if (String_StartsWith(tempStr, "STEAM_"))
 					{
 						strcopy(temp.auth, sizeof(temp.auth), tempStr);
-						temp.vipMode = VM_CUSTOM;
+						temp.vipMode = MVM_CUSTOM;
 					}
 					else
 					{
@@ -475,23 +306,23 @@ public int MenuCallbackModelsMenu(Menu menu, MenuAction action, int param1, int 
 			menu.GetItem(param2, item, sizeof(item));
 			if (StrEqual(item, "free"))
 			{
-				DisplayMenuModelDetailed(param1, VM_ALL);
+				DisplayMenuModelDetailed(param1, MVM_ALL);
 			}
 			else if (StrEqual(item, "vip"))
 			{
-				DisplayMenuModelDetailed(param1, VM_VIP);
+				DisplayMenuModelDetailed(param1, MVM_VIP);
 			}
 			else if (StrEqual(item, "evip"))
 			{
-				DisplayMenuModelDetailed(param1, VM_EVIP);
+				DisplayMenuModelDetailed(param1, MVM_EVIP);
 			}
 			else if (StrEqual(item, "admin"))
 			{
-				DisplayMenuModelDetailed(param1, VM_ADMIN);
+				DisplayMenuModelDetailed(param1, MVM_ADMIN);
 			}
 			else if (StrEqual(item, "custom"))
 			{
-				DisplayMenuModelDetailed(param1, VM_CUSTOM);
+				DisplayMenuModelDetailed(param1, MVM_CUSTOM);
 			}
 		}
 		case MenuAction_End:
@@ -534,18 +365,18 @@ public int MenuCallbackModelDetailed(Menu menu, MenuAction action, int param1, i
 			if (index == -1)
 				PrintToChat(param1, "No model found");
 			else
-				SetPlayerModelIndex(param1, index, true);
+				SetPlayerModelIndex(param1, index, false);
 		}
 		case MenuAction_End:
 			delete menu;
 	}
 }
 
-Menu CreateMenuModelDetailed(int client, VipMode vipMode)
+Menu CreateMenuModelDetailed(int client, ModelVipMode vipMode)
 {
 	Menu menu = new Menu(MenuCallbackModelDetailed);
 	int team = GetClientTeam(client);
-	if (vipMode == VM_CUSTOM)
+	if (vipMode == MVM_CUSTOM)
 	{
 		char steamid[32];
 		GetClientAuthId(client, AuthId_Steam2, steamid, sizeof(steamid));
@@ -579,7 +410,7 @@ Menu CreateMenuModelDetailed(int client, VipMode vipMode)
 	return menu;
 }
 
-void DisplayMenuModelDetailed(int client, VipMode vipMode)
+void DisplayMenuModelDetailed(int client, ModelVipMode vipMode)
 {
 	Menu menu = CreateMenuModelDetailed(client, vipMode);
 	menu.Display(client, MENU_TIME_FOREVER);
