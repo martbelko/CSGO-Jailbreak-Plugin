@@ -41,7 +41,6 @@ static Handle s_Hud = INVALID_HANDLE;
 static char s_OriginalNames[MAXPLAYERS + 1][MAX_NAME_LENGTH];
 static bool g_Rebels[MAXPLAYERS + 1];
 static ArrayList s_Owners;
-static Handle s_MuteTimer = INVALID_HANDLE;
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 {
@@ -181,32 +180,6 @@ public Action OnRoundStartPost(Handle event, const char[] name, bool dontBroadca
 	for (int i = 0; i < s_Owners.Length; ++i)
 		CloseHandle(s_Owners.Get(i));
 	s_Owners.Clear();
-	
-	// Mute prisoners except admins
-	for (int i = 1; i <= MaxClients; ++i)
-	{
-		if (IsClientValid(i) && GetClientTeam(i) == CS_TEAM_T && !IsAdmin(i))
-			SetClientListeningFlags(i, VOICE_MUTED);
-		else if (IsClientValid(i) && GetClientTeam(i) == CS_TEAM_CT)
-			SetClientListeningFlags(i, VOICE_NORMAL);
-	}
-	
-	if (s_MuteTimer != INVALID_HANDLE)
-		KillTimer(s_MuteTimer);
-	
-	s_MuteTimer = CreateTimer(MUTE_TIME_T, TimerCallbackUnmute);
-	PrintToChatAll("All prisoners have been muted for 30 seconds"); // TODO: Remove constant 30
-}
-
-public Action TimerCallbackUnmute(Handle timer, any data)
-{
-	for (int i = 1; i <= MaxClients; ++i)
-	{
-		if (IsClientValid(i) && GetClientTeam(i) == CS_TEAM_T && IsPlayerAlive(i) && !IsAdmin(i))
-			SetClientListeningFlags(i, VOICE_NORMAL);
-	}
-	
-	s_MuteTimer = INVALID_HANDLE;
 }
 
 public Action TimerCallbackSwap(Handle timer, any data)
@@ -297,6 +270,9 @@ public Action OnPlayerSpawnPost(int client)
 	CreateTimer(0.1, TimerShowPlayerHud, client, TIMER_REPEAT);
 	CreateTimer(0.1, TimerHideRadar, client);
 	CreateTimer(0.5, TImerCallbackGiveWeapons, client);
+	
+	// TODO: Add check for sm_mute command
+	SetClientListeningFlags(client, VOICE_NORMAL);
 	
 	g_Rebels[client] = false;
 	
