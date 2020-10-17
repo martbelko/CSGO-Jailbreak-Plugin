@@ -328,6 +328,7 @@ public void OnClientDisconnect(int client)
 public void OnPluginStart()
 {
 	RegConsoleCmd("sm_lr", CMDLastRequest);
+	RegConsoleCmd("sm_pp", CMDLastRequest);
 	RegConsoleCmd("sm_lastrequest", CMDLastRequest);
 	
 	HookEvent("player_death", OnPlayerDeathPre, EventHookMode_Pre);
