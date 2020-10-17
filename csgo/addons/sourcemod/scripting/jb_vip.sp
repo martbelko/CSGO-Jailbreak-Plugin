@@ -51,7 +51,7 @@ public void OnPluginStart()
 		return;
 	}
 	
-	PrintToServer("Connection to AdminVip database successful");
+	PrintToServer("Connection to VIP database successful");
 	
 	RegAdminCmd("sm_addvip", CMDAddVip, ADMFLAG_CUSTOM1, "Add VIP");
 	RegAdminCmd("sm_addextravip", CMDAddExtraVip, ADMFLAG_CUSTOM1, "Add ExtraVIP");
@@ -91,7 +91,7 @@ public void OnClientPostAdminCheck(int client)
 		{
 			vips[client] = VM_Vip;
 		}
-		else if (StrEqual(type, "t"))
+		else if (StrEqual(type, "st"))
 		{
 			vips[client] = VM_ExtraVip;
 		}
@@ -263,7 +263,7 @@ public Action CMDAddExtraVip(int client, int args)
 	
 	char steamid[32];
 	GetCmdArgString(steamid, sizeof(steamid));
-	AddToDatabase(client, steamid, "t", 43200);
+	AddToDatabase(client, steamid, "st", 43200);
 	return Plugin_Handled;
 }
 
@@ -326,12 +326,12 @@ public Action TimerCallbackRemoveVip(Handle timer, any data)
 public int native_IsVip(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
-	return (vips[client] == VM_Vip || vips[client] == VM_ExtraVip);
+	return (vips[client] == VM_Vip || vips[client] == VM_ExtraVip || IsAdmin(client));
 }
 
 // native bool IsExtraVip(int client);
 public int native_IsExtraVip(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
-	return (vips[client] == VM_ExtraVip);
+	return (vips[client] == VM_ExtraVip || IsAdmin(client));
 }
