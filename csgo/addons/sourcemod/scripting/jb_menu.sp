@@ -66,10 +66,8 @@ enum struct ShopItem
 	
 	void ResetAllowed()
 	{
-		for (int i = 1; i <= MaxClients; ++i)
-		{
+		for (int i = 1; i < MAXPLAYERS + 1; ++i)
 			this.allowed[i] = true;
-		}
 	}
 	
 	void Create(const char[] hashName_t, const char[] shopName_t, int price_t, VipMode vipOnly_t, int length_t = 0)
@@ -128,6 +126,7 @@ enum struct ShopItem
 				NotifyPlayerHud(client, "Sorry, you need to be ExtraVIP to get this item");
 			return false;
 		}
+		
 		if (!this.allowed[client])
 			return false;
 		
@@ -143,7 +142,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_hammer");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Kladivo");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Hammer", client);
@@ -152,7 +150,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_spanner");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Kľúč");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Spanner", client);
@@ -161,7 +158,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_axe");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Sekeru");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Axe", client);
@@ -170,7 +166,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_knife");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Nôž");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Knife", client);
@@ -179,7 +174,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_taser");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Taser - Zeus");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Taser - Zeus", client);
@@ -188,7 +182,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_healthshot");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Adrenalín");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Healthshot", client);
@@ -196,7 +189,6 @@ enum struct ShopItem
 		else if (!strcmp(this.hashName, "kevlar"))
 		{
 			SetPlayerArmor(client, 100);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Vestu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Kevlar", client);
@@ -204,7 +196,6 @@ enum struct ShopItem
 		else if (!strcmp(this.hashName, "helmet"))
 		{
 			SetPlayerHelmet(client, true);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Helmu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Helmet", client);
@@ -213,7 +204,6 @@ enum struct ShopItem
 		{
 			SetPlayerArmor(client, 100);
 			SetPlayerHelmet(client, true);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Vestu + Helmu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Kevlar + Helmet", client);
@@ -222,7 +212,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_hegrenade");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Granát");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got HE Grenade", client);
@@ -231,7 +220,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_flashbang");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Flash");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Flashbang", client);
@@ -240,7 +228,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_smokegrenade");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Smoke");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Smoke", client);
@@ -249,7 +236,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_molotov");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Molotov");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Molotov", client);
@@ -258,7 +244,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_tagrenade");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Taktický Granát");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Tactical Awareness Grenade", client);
@@ -267,7 +252,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_breachcharge");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Výbušniny");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Breach charge", client);
@@ -276,7 +260,6 @@ enum struct ShopItem
 		{
 			int weapon = GivePlayerItem(client, "weapon_shield");
 			s_BoughtWeapons.Push(weapon);
-			this.allowed[client] = false;
 			
 			NotifyPlayerHud(client, "Máš Štít");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Shield", client);
@@ -293,8 +276,6 @@ enum struct ShopItem
 			weapon = GivePlayerItem(client, "item_heavyassaultsuit");
 			s_BoughtWeapons.Push(weapon);
 
-			this.allowed[client] = false;
-			
 			NotifyPlayerHud(client, "Máš Ťažkoodeneckú Výzbroj");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Heavy Assault Suit", client);
 		}
@@ -302,7 +283,7 @@ enum struct ShopItem
 		{
 			EnableDoubleJump(client, true);
 			
-			NotifyPlayerHud(client, "Máš Double Jump");
+			NotifyPlayerHud(client, "Máš Dvojitý Skok");
 			NotifyTeamChat(client, "[URNA Shop] Player %N now has Double Jump", client);
 		}
 		else if (!strcmp(this.hashName, "fastwalk"))
@@ -334,7 +315,7 @@ enum struct ShopItem
 		else if (!strcmp(this.hashName, "changeskin"))
 		{
 			SetPlayerModel(client, 0);
-			NotifyPlayerHud(client, "You look like GUARD now!");
+			NotifyPlayerHud(client, "Vyzeráš ako dozorca!");
 			int weapon = GivePlayerItem(client, "weapon_m4a1_silencer");
 			SetPlayerAmmo(client, weapon, 0);
 			SetPlayerMagAmmo(weapon, 1);
@@ -346,7 +327,7 @@ enum struct ShopItem
 			char message[256];
 			Format(message, sizeof(message), MESSAGE_BLIND, this.length);
 			NotifyPlayerHud(client, message);
-			NotifyTeamChat(client, "[URNA Shop] All guards are blind!", client);
+			NotifyTeamChat(client, "[URNA Shop] Všetci dozorci sú slepí! Utekaj!", client);
 			for (int i = 1; i <= MaxClients; ++i)
 				if (IsClientValid(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_CT)
 					ServerCommand("sm_blind #%i 1000", GetClientUserId(i));
@@ -374,8 +355,6 @@ enum struct ShopItem
 			{
 				NotifyPlayerHud(client, "Tentokrát to nevyšlo :(");
 			}
-			
-			this.allowed[client] = false;
 		}
 		else if (!strcmp(this.hashName, "fortune"))
 		{
@@ -419,48 +398,48 @@ public void OnPluginStart()
 	s_ShopItemsCt = new ArrayList(sizeof(ShopItem));
 	
 	ShopItem item;
-	item.Create("spanner", "Wrench", 10, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("hammer", "Hammer", 12, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("axe", "Axe", 15, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("knife", "Knife", 20, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("taser", "Taser", 50, VM_Vip);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("healthshot", "Healthshot", 30, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("hegrenade", "Grenade", 15, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
+	item.Create("spanner", "Kľúč", 10, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("hammer", "Kladivo", 12, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("axe", "Sekera", 15, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("knife", "Nožík", 20, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("taser", "Taser / Zeus", 50, VM_Vip);
+	s_ShopItemsT.PushArray(item);
+	item.Create("healthshot", "Adrenalín", 30, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("hegrenade", "Výbušný granát", 15, VM_None);
+	s_ShopItemsT.PushArray(item);
 	item.Create("flashbang", "Flashbang", 12, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
+	s_ShopItemsT.PushArray(item);
 	item.Create("smoke", "Smoke", 12, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
+	s_ShopItemsT.PushArray(item);
 	item.Create("molotov", "Molotov", 10, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("tagrenade", "TacticalAwarnessGrenade", 12, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("kevlar", "Kevlar", 20, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("kevlarhelmet", "Kevlar+Helmet", 40, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("breachcharge", "Breachcharge", 100, VM_ExtraVip);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("djump", "DoubleJump", 50, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("fastwalk", "FastWalk", 60, VM_None, 5);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("invisibility", "Invisibility", 80, VM_None, 5);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("changeskin", "GuardSuit", 100, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("blind", "BlindGuards", 120, VM_Vip, 10);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("open", "OpenCellDoors", 70, VM_Vip);
-	s_ShopItemsT.PushArray(item, sizeof(item));
-	item.Create("fortune", "WheelofFortune", 60, VM_None);
-	s_ShopItemsT.PushArray(item, sizeof(item));
+	s_ShopItemsT.PushArray(item);
+	item.Create("tagrenade", "Taktický granát", 12, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("kevlar", "Vesta", 20, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("kevlarhelmet", "Vesta + Helma", 40, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("breachcharge", "Explozívna nálož", 70, VM_ExtraVip);
+	s_ShopItemsT.PushArray(item);
+	item.Create("djump", "Dvojitý skok", 50, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("fastwalk", "Zrýchlený pohyb", 60, VM_None, 5);
+	s_ShopItemsT.PushArray(item);
+	item.Create("invisibility", "Neviditeľnosť", 80, VM_None, 5);
+	s_ShopItemsT.PushArray(item);
+	item.Create("changeskin", "Prevlek dozorcu", 80, VM_None);
+	s_ShopItemsT.PushArray(item);
+	item.Create("blind", "Oslepiť dozorcov", 100, VM_Vip, 10);
+	s_ShopItemsT.PushArray(item);
+	item.Create("open", "Šanca na otvorenie ciel - VIP 25%, ExtraVIP 50%", 60, VM_Vip);
+	s_ShopItemsT.PushArray(item);
+	item.Create("fortune", "Koleso šťastia", 50, VM_None);
+	s_ShopItemsT.PushArray(item);
 	
 	s_NormalItems = new ArrayList();
 	s_VipItems = new ArrayList();
@@ -479,18 +458,18 @@ public void OnPluginStart()
 	s_MenuMainT = CreateMainMenuT();
 	s_MenuMainCt = CreateMainMenuCt();
 	
-	item.Create("helmet", "Helmet", 20, VM_None);
-	s_ShopItemsCt.PushArray(item, sizeof(item));
-	item.Create("tagrenade", "TacticalAwarnessGrenade", 20, VM_None);
-	s_ShopItemsCt.PushArray(item, sizeof(item));
-	item.Create("healthshot", "Healthshot", 30, VM_None);
-	s_ShopItemsCt.PushArray(item, sizeof(item));
-	item.Create("djump", "DoubleJump", 30, VM_None);
-	s_ShopItemsCt.PushArray(item, sizeof(item));
-	item.Create("shield", "Shield", 50, VM_Vip);
-	s_ShopItemsCt.PushArray(item, sizeof(item));
-	item.Create("heavy", "HeavyAssaultSuit", 70, VM_ExtraVip);
-	s_ShopItemsCt.PushArray(item, sizeof(item));
+	item.Create("helmet", "Helma", 20, VM_None);
+	s_ShopItemsCt.PushArray(item);
+	item.Create("tagrenade", "Taktický granát", 20, VM_None);
+	s_ShopItemsCt.PushArray(item);
+	item.Create("healthshot", "Adrenalín", 30, VM_None);
+	s_ShopItemsCt.PushArray(item);
+	item.Create("djump", "Dvojitý skok", 30, VM_None);
+	s_ShopItemsCt.PushArray(item);
+	item.Create("shield", "Štít", 50, VM_Vip);
+	s_ShopItemsCt.PushArray(item);
+	item.Create("heavy", "Tažkoodenecká výzbroj", 70, VM_ExtraVip);
+	s_ShopItemsCt.PushArray(item);
 	
 	s_BoughtWeapons = new ArrayList();
 	
@@ -565,13 +544,15 @@ public Action OnRoundStart(Handle event, const char[] name, bool dontBroadcast)
 	
 	for (int i = 0; i < s_ShopItemsT.Length; ++i)
 	{
-		s_ShopItemsT.GetArray(i, item, sizeof(item));
+		s_ShopItemsT.GetArray(i, item);
 		item.ResetAllowed();
+		s_ShopItemsT.SetArray(i, item);
 	}
 	for (int i = 0; i < s_ShopItemsCt.Length; ++i)
 	{
-		s_ShopItemsCt.GetArray(i, item, sizeof(item));
+		s_ShopItemsCt.GetArray(i, item);
 		item.ResetAllowed();
+		s_ShopItemsCt.SetArray(i, item);
 	}
 	
 	for (int i = 1; i <= MaxClients; ++i)
@@ -881,26 +862,18 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 				ShopItem item;
 				s_ShopItemsT.GetArray(index, item, sizeof(item));
 				if (!item.CanUse(param1, false))
-				{
 					return ITEMDRAW_DISABLED;
-				}
 				else
-				{
 					return style;
-				}
 			}
 			else if (GetClientTeam(param1) == CS_TEAM_CT)
 			{
 				ShopItem item;
 				s_ShopItemsCt.GetArray(index, item, sizeof(item));
 				if (!item.CanUse(param1, false))
-				{
 					return ITEMDRAW_DISABLED;
-				}
 				else
-				{
 					return style;
-				}
 			}
 	    }
 		case MenuAction_Select:
@@ -914,8 +887,11 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 				s_ShopItemsT.GetArray(index, item, sizeof(item));
 				if (!item.CanUse(param1))
 					return 0;
-					
+				
 				item.Use(param1);
+				item.allowed[param1] = false;
+				
+				s_ShopItemsT.SetArray(index, item);
 			}
 			else if (GetClientTeam(param1) == CS_TEAM_CT)
 			{
@@ -925,6 +901,9 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 					return 0;
 					
 				item.Use(param1);
+				item.allowed[param1] = false;
+				
+				s_ShopItemsCt.SetArray(index, item);
 			}
 			
 			/*if (StrEqual(itemName, "hammer"))
