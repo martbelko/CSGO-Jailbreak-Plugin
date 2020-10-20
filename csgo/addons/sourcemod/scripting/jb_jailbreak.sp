@@ -42,6 +42,8 @@ static char s_OriginalNames[MAXPLAYERS + 1][MAX_NAME_LENGTH];
 static bool g_Rebels[MAXPLAYERS + 1];
 static ArrayList s_Owners;
 
+bool s_AllowDropWeapons = true;
+
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 {
 	CreateNative("IsRebel", __IsRebel);
@@ -103,6 +105,7 @@ public void OnClientPutInServer(int client)
 	SDKHook(client, SDKHook_WeaponEquipPost, OnWeaponEquipPost);
 	SDKHook(client, SDKHook_SpawnPost, OnPlayerSpawnPost);
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
+	SDKHook(client, SDKHook_WeaponDrop, OnWeaponDrop);
 	
 	GetClientName(client, s_OriginalNames[client], MAX_NAME_LENGTH);
 }
@@ -176,6 +179,7 @@ int Balance(int tPlayers, int ctPlayers)
 
 public Action OnRoundStartPost(Handle event, const char[] name, bool dontBroadcast)
 {
+	s_AllowDropWeapons = false;
 	CreateTimer(0.1, TimerCallbackSwap);
 	for (int i = 0; i < s_Owners.Length; ++i)
 		CloseHandle(s_Owners.Get(i));
@@ -325,6 +329,13 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	return Plugin_Continue;
 }
 
+public Action OnWeaponDrop(int client, int weapon)
+{
+	if (!s_AllowDropWeapons)
+		return Plugin_Handled;
+	return Plugin_Continue;
+}
+
 public Action OnWeaponCanUse(int client, int weapon)
 {
 	char classname[64];
@@ -450,6 +461,8 @@ public Action TImerCallbackGiveWeapons(Handle timer, int client)
 				GivePlayerItem(client, "weapon_healthshot");
 		}
 	}
+	
+	s_AllowDropWeapons = true;
 }
 
 public Action CMDRules(int client, int argc)
