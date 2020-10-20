@@ -87,7 +87,7 @@ public void OnClientPostAdminCheck(int client)
 			queryResult.FetchString(1, reason, sizeof(reason));
 			KickClient(client, "You are banned. Reason: %s", reason);
 			
-			PrintToChatAll(" \x07 [URNA] Hráč %s\x07(%s) sa nemôže pripojiť, pretože je zabanovaný. Dôvod: %s", client, auth, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %N\x07(%s) sa nemôže pripojiť, pretože je zabanovaný. Dôvod: %s", client, auth, reason);
 		}
 	}
 	
@@ -206,9 +206,9 @@ public Action CMDBan(int client, int args)
 	
 		ReplyToCommand(client, "[URNA] Sucessfully banned steamID %s", victimAuth);
 		if (banLength > 0)
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal ban na %i minút. Dôvod: %s", victimName, victimAuth, banLength, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal ban. Admin: %N. Dĺžka banu: %i minút. Dôvod: %s", victimName, victimAuth, client, banLength, reason);
 		else
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný ban. Dôvod: %s", victimName, victimAuth, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný ban. Admin: %N. Dôvod: %s", victimName, victimAuth, client, reason);
 	}
 	else if (type == BT_CT)
 	{
@@ -217,9 +217,9 @@ public Action CMDBan(int client, int args)
 		
 		ReplyToCommand(client, "[URNA] Sucessfully CT banned steamID %s", victimAuth);
 		if (banLength > 0)
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal CT ban na %i minút. Dôvod: %s", victimName, victimAuth, banLength, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal CT ban. Admin: %N. Dĺžka banu: %i minút. Dôvod: %s", victimName, victimAuth, client, banLength, reason);
 		else
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný CT ban. Dôvod: %s", victimName, victimAuth, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný CT ban. Admin: %N. Dôvod: %s", victimName, victimAuth, client, reason);
 	}
 	
 	return Plugin_Handled;
