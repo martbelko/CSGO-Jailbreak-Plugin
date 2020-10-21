@@ -432,7 +432,6 @@ public Action TimerHideRadar(Handle timer, int client)
 {
 	if (IsClientValid(client))
 		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | (1 << 12));
-	KillTimer(timer);
 }
 
 public Action TImerCallbackGiveWeapons(Handle timer, int client)
@@ -467,7 +466,7 @@ public Action TImerCallbackGiveWeapons(Handle timer, int client)
 
 public Action CMDRules(int client, int argc)
 {
-	PrintToChat(client, "Read rules on this website: http://urna.smsmc.net/");
+	PrintToChat(client, RULES_STRING);
 	return Plugin_Handled;
 }
 
