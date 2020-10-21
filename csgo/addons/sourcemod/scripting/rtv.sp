@@ -26,8 +26,10 @@ public Plugin myinfo =
 #define MAX_LINE_LEN 64
 #define MIN_MAP_DELAY 3 // How many other maps should be player before the same map can be selected again
 #define s_NeededVotesPercentage 0.6
-#define s_InitialDelay 120.0
+#define s_InitialDelay 120.0 // Seconds
 #define s_RunOffPercentage 0.5
+#define s_MaxMapTime 45 // How many minutes can map be played before an automatic RTV
+#define s_ExtendTime 15 // Minutes
 
 enum RTVStatus
 {
@@ -145,7 +147,7 @@ public void OnClientDisconnect(int client)
 	
 	if (s_Votes && s_Voters && s_Votes >= s_VotesNeeded && s_RTVStatus == RTV_ALLOWED) 
 	{
-		StartRTV();
+		StartRTV(true);
 	}
 }
 
@@ -175,6 +177,8 @@ ArrayList LoadMapsFile(const char[] path)
 public void OnMapStart()
 {
 	CreateTimer(s_InitialDelay, TimerCallbackEnableRTV, _, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(s_MaxMapTime * 60.0, TimerCallbackAutomaticRTV, true, TIMER_FLAG_NO_MAPCHANGE);
+	
 	ArrayList maps = LoadMapsFile(s_MapFilepath);
 	
 	// Find out if the file was changed
@@ -203,18 +207,6 @@ public void OnMapStart()
 
 public void OnMapEnd()
 {
-	/*if (s_NextMapIndex == -1)
-		return;
-
-	for (int i = MIN_MAP_DELAY - 1; i >= 0; --i)
-	{
-		if (s_LatestMapsIndices[i] == -1)
-		{
-			s_LatestMapsIndices[i] = s_NextMapIndex;
-			return;
-		}
-	}*/
-	
 	for (int i = 0; i < MIN_MAP_DELAY - 1; ++i)
 		s_LatestMapsIndices[i + 1] = s_LatestMapsIndices[i];
 	
@@ -325,7 +317,7 @@ void AttemptRTV(int client)
 	PrintToChatAll("[URNA RTV] %t", "RTV Requested", name, s_Votes, s_VotesNeeded);
 	
 	if (s_Votes >= s_VotesNeeded)
-		StartRTV();
+		StartRTV(true);
 }
 
 bool IsMapIndexAvailable(int index)
@@ -364,7 +356,7 @@ void Shuffle(ArrayList arr)
 	}
 }
 
-void StartRTV()
+void StartRTV(bool allowExtend)
 {
 	if (s_RTVStatus == RTV_IN_CHANGE)
 		return;
@@ -372,7 +364,7 @@ void StartRTV()
 	s_RTVStatus = RTV_IN_VOTE;
 	if (IsVoteInProgress())
 	{
-		CreateTimer(5.0, TimerCallbackTryRTV);
+		CreateTimer(5.0, TimerCallbackTryRTV, allowExtend, TIMER_FLAG_NO_MAPCHANGE);
 		return;
 	}
 	
@@ -392,7 +384,9 @@ void StartRTV()
 		s_RTVMenu.AddItem(indexStr, map.name);
 	}
 	
-	//s_RTVMenu.AddItem("extend", "Predĺžiť túto mapu");
+	if (allowExtend)
+		s_RTVMenu.AddItem("extend", "Predĺžiť túto mapu");
+
 	s_RTVMenu.VoteResultCallback = MenuCallbackRTVResult;
 	s_RTVMenu.ExitButton = false;
 	s_RTVMenu.DisplayVoteToAll(20);
@@ -419,7 +413,7 @@ public void MenuCallbackRTVResult(Menu menu, int numVotes, int numClients, const
 		s_RTVMenu.AddItem(mapIndexStr, info2);
 		
 		s_RTVMenu.ExitButton = false;
-		s_RTVMenu.DisplayVoteToAll(30);
+		s_RTVMenu.DisplayVoteToAll(20);
 		
 		/* Notify */
 		float map1percent = float(itemInfo[0][VOTEINFO_ITEM_VOTES]) / float(numVotes) * 100;
@@ -439,6 +433,8 @@ public void MenuCallbackRTVResult(Menu menu, int numVotes, int numClients, const
 		if (StrEqual(indexStr, "extend"))
 		{
 			PrintToChatAll("[URNA] This map will be extended");
+			CreateTimer(s_ExtendTime * 60.0, TimerCallbackExtendRTV, false, TIMER_FLAG_NO_MAPCHANGE);
+			s_RTVStatus = RTV_VOTE_FINISHED;
 			return;
 		}
 		
@@ -457,11 +453,16 @@ public int MenuCallbackRTV(Menu menu, MenuAction action, int param1, int param2)
     {
         delete menu;
     }
+	else if (action == MenuAction_VoteCancel && param1 == VoteCancel_NoVotes)
+	{
+		PrintToChatAll("[URNA] %t", "No Votes Cast");
+		s_RTVStatus = RTV_ALLOWED;
+	}
 }
 
-public Action TimerCallbackTryRTV(Handle timer, any unused)
+public Action TimerCallbackTryRTV(Handle timer, bool allowExtend)
 {
-	StartRTV();
+	StartRTV(allowExtend);
 }
 
 public Action TimerCallbackEnableRTV(Handle timer, int unused)
@@ -469,4 +470,15 @@ public Action TimerCallbackEnableRTV(Handle timer, int unused)
 	s_RTVStatus = RTV_ALLOWED;
 	PrintToChatAll(" \x06 [URNA RTV] RTV je odteraz dostupné");
 	return Plugin_Handled;
+}
+
+public Action TimerCallbackAutomaticRTV(Handle timer, bool allowExtend)
+{
+	if (s_RTVStatus == RTV_ALLOWED)
+		StartRTV(allowExtend);
+}
+
+public Action TimerCallbackExtendRTV(Handle timer, bool allowExtend)
+{
+	StartRTV(allowExtend);
 }
