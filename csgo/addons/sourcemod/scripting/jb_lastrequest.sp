@@ -123,6 +123,9 @@ Action StartLrNoscope(Handle timer, any arg)
 	GetPlayersInLr(tPlayer, ctPlayer);
 	LrGame activeLr = GetActiveLr();
 	
+	GivePlayerItem(tPlayer, "weapon_knife");
+	GivePlayerItem(ctPlayer, "weapon_knife");
+	
 	int weapon1, weapon2;
 	if (activeLr == LR_NOSCOPE_SCOUT)
 	{
@@ -180,6 +183,9 @@ Action StartLrShot4Shot(Handle timer, any arg)
 	int tPlayer, ctPlayer;
 	GetPlayersInLr(tPlayer, ctPlayer);
 	LrGame activeLr = GetActiveLr();
+	
+	GivePlayerItem(tPlayer, "weapon_knife");
+	GivePlayerItem(ctPlayer, "weapon_knife");
 	
 	int weaponT, weaponCt;
 	if (activeLr == LR_S4S_DEAGLE)
@@ -265,6 +271,16 @@ Action StartLrRebel(Handle timer, any arg)
 	GivePlayerItem(tPlayer, "weapon_m249");
 	GivePlayerItem(tPlayer, "weapon_deagle");
 	GivePlayerItem(tPlayer, "weapon_knife");
+	
+	for (int i = 1; i <= MaxClients; ++i)
+	{
+		if (IsClientValid(i) && IsPlayerAlive(i))
+		{
+			SetEntityHealth(i, 100);
+			SetPlayerArmor(i, 100);
+			SetPlayerHelmet(i, true);
+		}
+	}
 }
 
 public Action TimerLrChickenFightCheck(Handle timer, any data)
