@@ -202,15 +202,36 @@ public void OnMapStart()
 		}
 	}
 	
+	char curMap[PLATFORM_MAX_PATH];
+	GetCurrentMap(curMap, sizeof(curMap));
+	for (int i = 0; i < s_Maps.Length; ++i)
+	{
+		Map map;
+		s_Maps.GetArray(i, map);
+		if (StrEqual(map.name, curMap))
+		{
+			if (s_NextMapIndex != i)
+			{
+				InsertLastMapIndex(i);
+				break;
+			}
+		}
+	}
+	
 	s_NextMapIndex = -1;
+}
+
+void InsertLastMapIndex(int index)
+{
+	for (int i = 0; i < MIN_MAP_DELAY - 1; ++i)
+		s_LatestMapsIndices[i + 1] = s_LatestMapsIndices[i];
+		
+	s_LatestMapsIndices[0] = index;
 }
 
 public void OnMapEnd()
 {
-	for (int i = 0; i < MIN_MAP_DELAY - 1; ++i)
-		s_LatestMapsIndices[i + 1] = s_LatestMapsIndices[i];
-	
-	s_LatestMapsIndices[0] = s_NextMapIndex;
+	InsertLastMapIndex(s_NextMapIndex);
 }
 
 public Action OnRoundStartPost(Handle event, const char[] name, bool dontBroadcast)
