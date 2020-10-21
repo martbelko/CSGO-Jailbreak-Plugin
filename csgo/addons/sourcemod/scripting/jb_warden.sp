@@ -73,6 +73,7 @@ public void OnPluginStart()
 {
 	RegConsoleCmd("sm_warden", CMDWarden, "");
 	RegConsoleCmd("sm_w", CMDWarden, "");
+	RegConsoleCmd("sm_W", CMDWarden, "");
 	RegConsoleCmd("sm_unwarden", CMDUnwarden, "");
 	RegConsoleCmd("sm_uw", CMDUnwarden, "");
 	RegConsoleCmd("sm_wardenmenu", CMDWardenMenu, "");
