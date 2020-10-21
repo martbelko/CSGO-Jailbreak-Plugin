@@ -1,2 +1,5 @@
 
 *.smx
+*.exe
+
+csgo/addons/sourcemod/scripting/include/include-default/
