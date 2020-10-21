@@ -30,7 +30,8 @@ public Plugin myinfo =
 enum WardenGame
 {
 	WG_NONE = 0,
-	WG_HNS
+	WG_HNS,
+	WG_SPARTA,
 }
 
 enum BoxMode
