@@ -257,16 +257,16 @@ public int native_Disarm(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
 	bool removeArmor = GetNativeCell(2);
-	for (int i = 0; i < 10; ++i)
+	
+	int m_hMyWeapons_size = GetEntPropArraySize(client, Prop_Send, "m_hMyWeapons"); // array size
+	int item;
+	for(int index = 0; index < m_hMyWeapons_size; index++)
 	{
-		int weapon = -1;
-		while ((weapon = GetPlayerWeaponSlot(client, i)) != -1)
+		item = GetEntPropEnt(client, Prop_Send, "m_hMyWeapons", index);
+		if(item != -1)
 		{
-			if (IsValidEntity(weapon))
-			{
-				RemovePlayerItem(client, weapon);
-				RemoveEdict(weapon);
-			}
+			RemovePlayerItem(client, item);
+			AcceptEntityInput(item, "Kill");
 		}
 	}
 	
