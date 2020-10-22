@@ -51,6 +51,62 @@ enum struct Model
 	char auth[32];
 }
 
+static char anarchistModelsT[][] = 
+{
+	"models/player/custom_player/legacy/tm_anarchist.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantA.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantB.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantC.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantD.mdl"
+};
+
+static char phoenixModelsT[][] = 
+{
+	"models/player/custom_player/legacy/tm_phoenix.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_heavy.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantA.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantB.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantC.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantD.mdl"
+};
+
+static char pirateModelsT[][] = 
+{
+	"models/player/custom_player/legacy/tm_pirate.mdl",
+	"models/player/custom_player/legacy/tm_pirate_variantA.mdl",
+	"models/player/custom_player/legacy/tm_pirate_variantB.mdl",
+	"models/player/custom_player/legacy/tm_pirate_variantC.mdl",
+	"models/player/custom_player/legacy/tm_pirate_variantD.mdl"
+};
+
+static char fbiModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_fbi.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantD.mdl"
+};
+
+static char gignModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_gign.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantD.mdl"
+};
+
+static char sasModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_sas.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantD.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantE.mdl"
+};
+
 static ArrayList s_ModelArrayList;
 
 static int s_PlayerTModelIndex[MAXPLAYERS + 1];
@@ -130,7 +186,7 @@ public void OnPluginStart()
 	BuildPath(Path_SM, s_ModelGroupsPath, sizeof(s_ModelGroupsPath), PATH_MODELS_GROUPS);
 	
 	OnMapStart();
-
+	
 	for (int i = 1; i <= MaxClients; ++i)
 		if (IsClientInGame(i))
 			OnClientPutInServer(i);
@@ -231,8 +287,45 @@ void LoadModelsGroups(const char[] path, ArrayList& modelArrayList)
 public void OnMapStart()
 {
 	PrecacheModel("models/weapons/t_arms_phoenix.mdl");
-	PrecacheModel("models/weapons/ct_arms_sas.mdl");
 	PrecacheModel("models/weapons/t_arms_leet.mdl");
+	PrecacheModel("models/weapons/ct_arms_sas.mdl");
+
+	for (int i = 0; i < sizeof(fbiModelsCT); i++)
+	{
+		if(fbiModelsCT[i][0] && !IsModelPrecached(fbiModelsCT[i]))
+			PrecacheModel(fbiModelsCT[i]);
+	}
+
+	for (int i = 0; i < sizeof(gignModelsCT); i++)
+	{
+		if(gignModelsCT[i][0] && !IsModelPrecached(gignModelsCT[i]))
+			PrecacheModel(gignModelsCT[i]);
+	}
+
+	for (int i = 0; i < sizeof(sasModelsCT); i++)
+	{
+		if(sasModelsCT[i][0] && !IsModelPrecached(sasModelsCT[i]))
+			PrecacheModel(sasModelsCT[i]);
+	}
+
+	for (int i = 0; i < sizeof(anarchistModelsT); i++)
+	{
+		if(anarchistModelsT[i][0] && !IsModelPrecached(anarchistModelsT[i]))
+			PrecacheModel(anarchistModelsT[i]);
+	}
+
+	for (int i = 0; i < sizeof(phoenixModelsT); i++)
+	{
+		if(phoenixModelsT[i][0] && !IsModelPrecached(phoenixModelsT[i]))
+			PrecacheModel(phoenixModelsT[i]);
+	}
+
+	for (int i = 0; i < sizeof(pirateModelsT); i++)
+	{
+		if(pirateModelsT[i][0] && !IsModelPrecached(pirateModelsT[i]))
+			PrecacheModel(pirateModelsT[i]);
+	}
+
 	LoadModelsDownload(s_ModelDownloadPath);
 	LoadModelsGroups(s_ModelGroupsPath, s_ModelArrayList);
 	for (int i = 1; i <= MaxClients; ++i)
@@ -335,7 +428,7 @@ public int MenuCallbackModelsMenu(Menu menu, MenuAction action, int param1, int 
 void UseModel(int client, int index)
 {
 	Model mdl;
-	s_ModelArrayList.GetArray(index, mdl, sizeof(mdl));
+	s_ModelArrayList.GetArray(index, mdl);
 	SetEntityModel(client, mdl.path);
 	SetEntPropString(client, Prop_Send, "m_szArmsModel", mdl.arms);
 	RequestFrame(RemoveItem, EntIndexToEntRef(client));
