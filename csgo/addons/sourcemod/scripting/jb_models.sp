@@ -27,7 +27,7 @@ public Plugin myinfo =
 	url = ""
 };
 
-#define MAX_FILE_LEN 1024
+#define MAX_LINE_LEN 1024
 
 #define PATH_MODELS_DOWNLOAD "configs/modelsdownload.ini"
 #define PATH_MODELS_GROUPS "configs/modelsgroups.ini"
@@ -147,7 +147,7 @@ void LoadModelsDownload(const char[] path)
 {
 	// TODO: Add check if file exists, if not set fail state
 	Handle file = OpenFile(path, "r");
-	char line[MAX_FILE_LEN];
+	char line[MAX_LINE_LEN];
 	while (ReadFileLine(file, line, sizeof(line)))
 	{
 		String_Trim(line, line, sizeof(line));
