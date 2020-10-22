@@ -196,7 +196,7 @@ public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
 	s_BoxMode = BM_NONE;
 }
 
-public Action CMDWarden(int client, int args)
+void StartWarden(int client)
 {
 	if (s_Warden == -1)
 	{
@@ -227,7 +227,21 @@ public Action CMDWarden(int client, int args)
 	{
 		ReplyToCommand(client, "[URNA Warden] Sorry, %N is current Warden", s_Warden);
 	}
-	
+}
+
+public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs)
+{
+	if (StrEqual(sArgs, "!W", true))
+	{
+		ReplySource old = SetCmdReplySource(SM_REPLY_TO_CHAT);
+		StartWarden(client);
+		SetCmdReplySource(old);
+	}
+}
+
+public Action CMDWarden(int client, int argc)
+{
+	StartWarden(client);
 	return Plugin_Handled;
 }
 
@@ -269,11 +283,11 @@ public Action CMDOpen(int client, int args)
 	if (client == s_Warden)
 	{
 		OpenDoors();
-		ReplyToCommand(client, "Cells were opened");
+		ReplyToCommand(client, "[URNA Warden] Cells were opened");
 	}
 	else
 	{
-		ReplyToCommand(client, "You need to be warden to use this command");
+		ReplyToCommand(client, "[URNA Warden] You need to be warden to use this command");
 	}
 	
 	return Plugin_Handled;
