@@ -198,6 +198,46 @@ Action StartLrShot4Shot(Handle timer, any arg)
 		weaponT = GivePlayerItem(tPlayer, "weapon_revolver");
 		weaponCt = GivePlayerItem(ctPlayer, "weapon_revolver");
 	}
+	else if (activeLr == LR_S4S_GLOCK)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_glock");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_glock");
+	}
+	else if (activeLr == LR_S4S_P2000)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_hkp2000");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_hkp2000");
+	}
+	else if (activeLr == LR_S4S_USP)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_usp_silencer");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_usp_silencer");
+	}
+	else if (activeLr == LR_S4S_P250)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_p250");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_p250");
+	}
+	else if (activeLr == LR_S4S_TEC9)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_tec9");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_tec9");
+	}
+	else if (activeLr == LR_S4S_FIVESEVEN)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_fiveseven");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_fiveseven");
+	}
+	else if (activeLr == LR_S4S_CZ75)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_cz75a");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_cz75a");
+	}
+	else if (activeLr == LR_S4S_DUALS)
+	{
+		weaponT = GivePlayerItem(tPlayer, "weapon_elite");
+		weaponCt = GivePlayerItem(ctPlayer, "weapon_elite");
+	}
 	
 	SetPlayerAmmo(tPlayer, weaponT, 0);
 	SetPlayerMagAmmo(weaponT, 1);
@@ -374,7 +414,15 @@ public void OnPluginStart()
 	s_LrNames[14] = "Hot Potato";
 	s_LrNames[15] = "Shot4Shot Deagle";
 	s_LrNames[16] = "Shot4Shot Revolver";
-	s_LrNames[17] = "Rebel";
+	s_LrNames[17] = "Shot4Shot Glock";
+	s_LrNames[18] = "Shot4Shot P2000";
+	s_LrNames[19] = "Shot4Shot USP";
+	s_LrNames[20] = "Shot4Shot P250";
+	s_LrNames[21] = "Shot4Shot Dual Berettas";
+	s_LrNames[22] = "Shot4Shot Tec9";
+	s_LrNames[23] = "Shot4Shot Fiveseven";
+	s_LrNames[24] = "Shot4Shot CZ75";
+	s_LrNames[25] = "Rebel";
 	
 	s_LrFunctions[0] = StartLrNoLr;
 	s_LrFunctions[1] = StartLrClose;
@@ -634,11 +682,11 @@ public Action CMDLastRequest(int client, int args)
 		ReplyToCommand(client, "[URNA Last Request] You can use this command only if you are the last alive on T side");
 		return Plugin_Handled;
 	}
-	if (GetNumberOfPlayers(CS_TEAM_CT, true) == 0)
+	/*if (GetNumberOfPlayers(CS_TEAM_CT, true) == 0)
 	{
 		ReplyToCommand(client, "[URNA Last Request] You cannot use this command, nobody is alive on CT side");
 		return Plugin_Handled;
-	}
+	}*/
 	if (s_ActiveLr != LR_NO_LR)
 	{
 		ReplyToCommand(client, "[URNA Last Request] Last Request is still in progress");
@@ -679,6 +727,14 @@ public int CallbackLrMenu(Menu menu, MenuAction action, int client, int option)
 			else if (StrEqual(item, "shot4shot"))
 			{
 				Menu newMenu = new Menu(CallbackDetailedLr);
+				newMenu.AddItem("s4sglock", "Glock");
+				newMenu.AddItem("s4sp2000", "P2000");
+				newMenu.AddItem("s4susp", "USP");
+				newMenu.AddItem("s4sp250", "P250");
+				newMenu.AddItem("s4sduals", "Dual Berettas");
+				newMenu.AddItem("s4sfiveseven", "Fiveseven");
+				newMenu.AddItem("s4stec9", "Tec9");
+				newMenu.AddItem("s4scz75", "CZ75");
 				newMenu.AddItem("s4sdeagle", "Deagle");
 				newMenu.AddItem("s4srevolver", "Revolver");
 				newMenu.Display(client, 30);
@@ -777,6 +833,38 @@ public int CallbackDetailedLr(Menu menu, MenuAction action, int client, int opti
 			else if (StrEqual(item, "s4srevolver"))
 			{
 				s_PredictActiveLr = LR_S4S_REVOLVER;
+			}
+			else if (StrEqual(item, "s4sglock"))
+			{
+				s_PredictActiveLr = LR_S4S_GLOCK;
+			}
+			else if (StrEqual(item, "s4sp2000"))
+			{
+				s_PredictActiveLr = LR_S4S_P2000;
+			}
+			else if (StrEqual(item, "s4susp"))
+			{
+				s_PredictActiveLr = LR_S4S_USP;
+			}
+			else if (StrEqual(item, "s4sp250"))
+			{
+				s_PredictActiveLr = LR_S4S_P250;
+			}
+			else if (StrEqual(item, "s4sduals"))
+			{
+				s_PredictActiveLr = LR_S4S_DUALS;
+			}
+			else if (StrEqual(item, "s4stec9"))
+			{
+				s_PredictActiveLr = LR_S4S_TEC9;
+			}
+			else if (StrEqual(item, "s4sfiveseven"))
+			{
+				s_PredictActiveLr = LR_S4S_FIVESEVEN;
+			}
+			else if (StrEqual(item, "s4scz75"))
+			{
+				s_PredictActiveLr = LR_S4S_CZ75;
 			}
 			else if (StrEqual(item, "nsscout"))
 			{
@@ -895,42 +983,32 @@ LrGroup GetLrGroupFromLrGame(LrGame lrGame)
 {
 	switch (lrGame)
 	{
-		case LR_NO_LR:
-			return LRG_NO_LR;
-		case LR_1HP_KNIFE:
-			return LRG_CLOSE;
-		case LR_100HP_KNIFE:
-			return LRG_CLOSE;
-		case LR_1HP_FISTS:
-			return LRG_CLOSE;
-		case LR_100HP_FISTS:
-			return LRG_CLOSE;
-		case LR_CHICKEN_FIGHT:
-			return LRG_CHICKEN_FIGHT;
-		case LR_GUN_TOSS:
-			return LRG_GUN_TOSS;
-		case LR_NOSCOPE_AWP:
-			return LRG_NOSCOPE;
-		case LR_NOSCOPE_SCOUT:
-			return LRG_NOSCOPE;
-		case LR_NOSCOPE_SCAR20:
-			return LRG_NOSCOPE;
-		case LR_NOSCOPE_G3SG1:
-			return LRG_NOSCOPE;
-		case LR_DODGEBALL_FLASHBANG:
-			return LRG_DODGEBALL;
-		case LR_DODGEBALL_MEELEE:
-			return LRG_DODGEBALL;
-		case LR_DODGEBALL_SNOWBALL:
-			return LRG_DODGEBALL;
-		case LR_HOT_POTATO:
-			return LRG_HOT_POTATO;
-		case LR_S4S_DEAGLE:
-			return LRG_S4S;
-		case LR_S4S_REVOLVER:
-			return LRG_S4S;
-		case LR_REBEL:
-			return LRG_REBEL;
+		case LR_NO_LR:return LRG_NO_LR;
+		case LR_1HP_KNIFE: return LRG_CLOSE;
+		case LR_100HP_KNIFE: return LRG_CLOSE;
+		case LR_1HP_FISTS: return LRG_CLOSE;
+		case LR_100HP_FISTS: return LRG_CLOSE;
+		case LR_CHICKEN_FIGHT: return LRG_CHICKEN_FIGHT;
+		case LR_GUN_TOSS: return LRG_GUN_TOSS;
+		case LR_NOSCOPE_AWP: return LRG_NOSCOPE;
+		case LR_NOSCOPE_SCOUT: return LRG_NOSCOPE;
+		case LR_NOSCOPE_SCAR20: return LRG_NOSCOPE;
+		case LR_NOSCOPE_G3SG1: return LRG_NOSCOPE;
+		case LR_DODGEBALL_FLASHBANG: return LRG_DODGEBALL;
+		case LR_DODGEBALL_MEELEE: return LRG_DODGEBALL;
+		case LR_DODGEBALL_SNOWBALL: return LRG_DODGEBALL;
+		case LR_HOT_POTATO: return LRG_HOT_POTATO;
+		case LR_S4S_DEAGLE: return LRG_S4S;
+		case LR_S4S_REVOLVER: return LRG_S4S;
+		case LR_S4S_GLOCK: return LRG_S4S;
+		case LR_S4S_P2000: return LRG_S4S;
+		case LR_S4S_USP: return LRG_S4S;
+		case LR_S4S_P250: return LRG_S4S;
+		case LR_S4S_DUALS: return LRG_S4S;
+		case LR_S4S_FIVESEVEN: return LRG_S4S;
+		case LR_S4S_TEC9: return LRG_S4S;
+		case LR_S4S_CZ75: return LRG_S4S;
+		case LR_REBEL: return LRG_REBEL;
 	}
 	
 	return LRG_NO_LR;
