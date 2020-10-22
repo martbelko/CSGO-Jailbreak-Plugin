@@ -185,7 +185,9 @@ public void OnPluginStart()
 	BuildPath(Path_SM, s_ModelDownloadPath, sizeof(s_ModelDownloadPath), PATH_MODELS_DOWNLOAD);
 	BuildPath(Path_SM, s_ModelGroupsPath, sizeof(s_ModelGroupsPath), PATH_MODELS_GROUPS);
 	
-	OnMapStart();
+	OnMapStart(); // Needs to be here in order to load correct default model indices,
+	              // when the plugin is started and there are people already on the server
+	              // (otherwise OnClientPutInServer would load index -1)
 	
 	for (int i = 1; i <= MaxClients; ++i)
 		if (IsClientInGame(i))
