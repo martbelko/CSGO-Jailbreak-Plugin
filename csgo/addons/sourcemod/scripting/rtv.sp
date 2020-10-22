@@ -65,6 +65,8 @@ static int s_NextMapIndex = -1; // Next map index in 's_Maps' chosen by RTV
 
 static Menu s_RTVMenu = null; // Menu for RTV
 
+static int s_TimeMapStart = 0; // Time (in seconds), when the current map started
+
 public void OnPluginStart()
 {
 	LoadTranslations("common.phrases");
@@ -74,6 +76,10 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_rockthevote", CMDRTV, "Rock The Vote");
 	
 	RegConsoleCmd("sm_nextmap", CMDNextMap, "NextMap");
+	RegConsoleCmd("nextmap", CMDNextMap, "NextMap");
+	
+	RegConsoleCmd("sm_timeleft", CMDTimeLeft, "Time Left");
+	RegConsoleCmd("timeleft", CMDTimeLeft, "Time Left");
 	
 	RegAdminCmd("sm_fakecmd", CMDFakeCmd, ADMFLAG_GENERIC); // TODO: Temporary, move to another file
 	
@@ -178,6 +184,7 @@ public void OnMapStart()
 {
 	CreateTimer(s_InitialDelay, TimerCallbackEnableRTV, _, TIMER_FLAG_NO_MAPCHANGE);
 	CreateTimer(s_MaxMapTime * 60.0, TimerCallbackAutomaticRTV, true, TIMER_FLAG_NO_MAPCHANGE);
+	s_TimeMapStart = GetTime();
 	
 	ArrayList maps = LoadMapsFile(s_MapFilepath);
 	
@@ -254,6 +261,18 @@ public Action CMDNextMap(int client, int argc)
 {
 	ShowNextMap(client);
 	return Plugin_Handled;
+}
+
+public Action CMDTimeLeft(int client, int argc)
+{
+	ShowTimeLeft(client);
+	return Plugin_Handled;
+}
+
+void ShowTimeLeft(int client)
+{
+	int timeLeft = GetTime() - s_TimeMapStart;
+	ReplyToCommand(client, "%i", timeLeft);
 }
 
 void ShowNextMap(int client)
@@ -440,7 +459,7 @@ public void MenuCallbackRTVResult(Menu menu, int numVotes, int numClients, const
 		float map1percent = float(itemInfo[0][VOTEINFO_ITEM_VOTES]) / float(numVotes) * 100;
 		float map2percent = float(itemInfo[1][VOTEINFO_ITEM_VOTES]) / float(numVotes) * 100;
 		
-		PrintToChatAll("[SM] %t", "Starting Runoff", s_RunOffPercentage * 100.0, info1, map1percent, info2, map2percent);
+		PrintToChatAll("[URNA] Začínam rozstrel", s_RunOffPercentage * 100.0, info1, map1percent, info2, map2percent);
 		LogMessage("Voting for next map was indecisive, beginning runoff vote");
 	}
 	else
