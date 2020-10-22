@@ -68,7 +68,7 @@ public void OnClientPostAdminCheck(int client)
 	GetClientAuthId(client, AuthId_Steam2, auth, sizeof(auth));
 	
 	char query[128];
-	Format(query, sizeof(query), "SELECT victimAuth, reason, type FROM Banlist WHERE victimAuth='%s'", auth);
+	Format(query, sizeof(query), "SELECT victimAuth, reason, type FROM Banlist WHERE victimAuth='%s' and type=%i", auth, BT_NORMAL);
 	DBResultSet queryResult = SQL_Query(DB, query);
 	if (queryResult == INVALID_HANDLE)
 	{
