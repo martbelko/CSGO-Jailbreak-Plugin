@@ -325,6 +325,8 @@ public void OnMapStart()
 		if(pirateModelsT[i][0] && !IsModelPrecached(pirateModelsT[i]))
 			PrecacheModel(pirateModelsT[i]);
 	}
+	
+	s_ModelArrayList.Clear();
 
 	LoadModelsDownload(s_ModelDownloadPath);
 	LoadModelsGroups(s_ModelGroupsPath, s_ModelArrayList);
