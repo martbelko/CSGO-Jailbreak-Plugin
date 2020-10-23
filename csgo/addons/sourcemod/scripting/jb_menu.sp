@@ -33,9 +33,6 @@ public Plugin myinfo =
 #define MESSAGE_FASTWALK "You can now move faster. %i seconds remaining"
 #define MESSAGE_BLIND "All guards are blind. %i seconds remaining"
 
-#define PATH_TMODEL "models/player/custom_player/legacy/tm_phoenix_varianta.mdl"
-#define PATH_CTMODEL "models/player/custom_player/legacy/ctm_sas_varianta.mdl"
-
 #define POINTS_NEW_ROUND_NORMAL 10
 #define POINTS_NEW_ROUND_VIP 12
 #define POINTS_NEW_ROUND_EVIP 15
@@ -498,12 +495,6 @@ public void OnPluginStart()
 	
 	s_BoughtWeapons.Clear();
 }*/
-
-public void OnMapStart()
-{
-	PrecacheModel(PATH_TMODEL);
-	PrecacheModel(PATH_CTMODEL);
-}
 
 public void OnClientPutInServer(int client)
 {
