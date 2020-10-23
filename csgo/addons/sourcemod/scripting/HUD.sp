@@ -54,7 +54,7 @@ void RedrawCenterHUD(int client, const char[] format, any ...)
 {
 	char text[256];
 	VFormat(text, sizeof(text), format, 3);
-	SetHudTextParams(-1.0, -1.0, 9999.0, 255, 255, 255, 255, 0);
+	SetHudTextParams(-1.0, 0.4, 5.0, 255, 255, 255, 255, 0);
 	ShowHudText(client, 2, text);
 }
 
@@ -62,7 +62,7 @@ void RedrawTopHUD(int client, const char[] format, any ...)
 {
 	char text[256];
 	VFormat(text, sizeof(text), format, 3);
-	SetHudTextParams(-1.0, 0.05, 9999.0, 255, 255, 0, 255, 0);
+	SetHudTextParams(-1.0, 0.05, 5.0, 255, 255, 0, 255, 0);
 	ShowHudText(client, 3, text);
 }
 
