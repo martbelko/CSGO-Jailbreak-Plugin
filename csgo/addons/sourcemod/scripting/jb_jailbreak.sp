@@ -37,7 +37,6 @@ public Plugin myinfo =
 
 #define RULES_STRING "Read rules on this website: http://urna.smsmc.net/"
 
-static Handle s_Hud = INVALID_HANDLE;
 static char s_OriginalNames[MAXPLAYERS + 1][MAX_NAME_LENGTH];
 static bool g_Rebels[MAXPLAYERS + 1];
 static ArrayList s_Owners;
@@ -65,8 +64,6 @@ public void OnPluginStart()
 	AddCommandListener(AltJoin, "jointeam");
 	
 	RegConsoleCmd("sm_rules", CMDRules, "Rules");
-	
-	s_Hud = CreateHudSynchronizer();
 	
 	s_Owners = new ArrayList(sizeof(Handle));
 	
@@ -271,9 +268,10 @@ public Action OnPlayerSpawnPost(int client)
 	
 	SetEntProp(client, Prop_Send, "m_CollisionGroup", 5);
 	
-	CreateTimer(0.1, TimerShowPlayerHud, client, TIMER_REPEAT);
-	CreateTimer(0.1, TimerHideRadar, client);
-	CreateTimer(0.5, TImerCallbackGiveWeapons, client);
+	int userid = GetClientUserId(client);
+	CreateTimer(0.1, TimerShowPlayerHud, userid, TIMER_REPEAT);
+	CreateTimer(0.1, TimerHideRadar, userid);
+	CreateTimer(0.5, TImerCallbackGiveWeapons, userid);
 	
 	// TODO: Add check for sm_mute command
 	SetClientListeningFlags(client, VOICE_NORMAL);
@@ -392,18 +390,11 @@ public Action OnWeaponEquipPost(int client, int weapon)
 	}
 }
 
-public Action TimerShowPlayerHud(Handle timer, int client)
+public Action TimerShowPlayerHud(Handle timer, int userid)
 {
-	if (!IsClientValid(client) || !IsPlayerAlive(client)) // if player disconnect or is dead
-	{
-		KillTimer(timer);
-		return Plugin_Handled;
-	}
-	if (!IsPlayerAlive(client))
-	{
-		KillTimer(timer);
-		return Plugin_Handled;
-	}
+	int client = GetClientOfUserId(userid);
+	if (!IsClientValid(client)) // if player disconnect or is dead
+		return Plugin_Stop;
 	
 	int target = GetClientAimTarget(client, true);
 	if (!IsClientValid(target))
@@ -428,15 +419,17 @@ public Action TimerShowPlayerHud(Handle timer, int client)
 	return Plugin_Continue;
 }
 
-public Action TimerHideRadar(Handle timer, int client)
+public Action TimerHideRadar(Handle timer, int userid)
 {
+	int client = GetClientOfUserId(userid);
 	if (IsClientValid(client))
 		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | (1 << 12));
 }
 
-public Action TImerCallbackGiveWeapons(Handle timer, int client)
+public Action TImerCallbackGiveWeapons(Handle timer, int userid)
 {
-	if (IsPlayerAlive(client))
+	int client = GetClientOfUserId(userid);
+	if (IsClientValid(client) && IsPlayerAlive(client))
 	{
 		Disarm(client, true);
 		if (GetClientTeam(client) == CS_TEAM_T)
