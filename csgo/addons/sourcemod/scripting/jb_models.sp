@@ -15,6 +15,7 @@
 #include <jb_core>
 #include <jb_jailbreak>
 #include <jb_vip>
+#include <HUD>
 
 #pragma newdecls required
 
@@ -116,7 +117,7 @@ static int s_PlayerCtModelIndex[MAXPLAYERS + 1];
 bool CanUseModel(int client, int modelIndex)
 {
 	Model mdl;
-	s_ModelArrayList.GetArray(modelIndex, mdl, sizeof(mdl));
+	s_ModelArrayList.GetArray(modelIndex, mdl);
 	if (mdl.team != GetClientTeam(client))
 		return false;
 	
@@ -155,7 +156,7 @@ void CheckCustomModels(int client)
 	for (int i = 0; i < s_ModelArrayList.Length; ++i)
 	{
 		Model mdl;
-		s_ModelArrayList.GetArray(i, mdl, sizeof(mdl));
+		s_ModelArrayList.GetArray(i, mdl);
 		if (StrEqual(mdl.auth, steamid))
 		{
 			if (mdl.team == CS_TEAM_T)
@@ -436,6 +437,8 @@ void UseModel(int client, int index)
 	SetEntityModel(client, mdl.path);
 	SetEntPropString(client, Prop_Send, "m_szArmsModel", mdl.arms);
 	RequestFrame(RemoveItem, EntIndexToEntRef(client));
+	
+	OnSkinChanged(client, mdl.displayName);
 }
 
 void SetPlayerModelIndex(int client, int index, bool instant = false)
@@ -480,7 +483,7 @@ Menu CreateMenuModelDetailed(int client, ModelVipMode vipMode)
 		for (int i = 0; i < s_ModelArrayList.Length; ++i)
 		{
 			Model mdl;
-			s_ModelArrayList.GetArray(i, mdl, sizeof(mdl));
+			s_ModelArrayList.GetArray(i, mdl);
 			if (mdl.team == team && StrEqual(mdl.auth, steamid))
 			{
 				char indexStr[4];
@@ -494,7 +497,7 @@ Menu CreateMenuModelDetailed(int client, ModelVipMode vipMode)
 		for (int i = 0; i < s_ModelArrayList.Length; ++i)
 		{
 			Model mdl;
-			s_ModelArrayList.GetArray(i, mdl, sizeof(mdl));
+			s_ModelArrayList.GetArray(i, mdl);
 			if (mdl.team == team && mdl.vipMode == vipMode)
 			{
 				char indexStr[4];
@@ -565,7 +568,7 @@ public int __SetPlayerModel(Handle plugin, int argc)
 	if (IsClientValid(client))
 	{
 		Model mdl;
-		s_ModelArrayList.GetArray(index, mdl, sizeof(mdl));
+		s_ModelArrayList.GetArray(index, mdl);
 		SetEntityModel(client, mdl.path);
 		SetEntPropString(client, Prop_Send, "m_szArmsModel", mdl.arms);
 		RequestFrame(RemoveItem, EntIndexToEntRef(client));
