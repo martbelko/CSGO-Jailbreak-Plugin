@@ -15,6 +15,7 @@
 #include <jb_core>
 #include <jb_jailbreak>
 #include <jb_menu>
+#include <HUD>
 
 #pragma newdecls required
 
@@ -97,6 +98,11 @@ public void OnPluginStart()
 	for (int i = 1; i <= MaxClients; ++i)
 		if (IsClientInGame(i))
 			OnClientPutInServer(i);
+}
+
+public void OnMapEnd()
+{
+	ResetWardenTimer();
 }
 
 public void OnClientPutInServer(int client)
@@ -198,6 +204,9 @@ public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
 
 void StartWarden(int client)
 {
+	if (!IsClientValid(client))
+		return;
+	
 	if (s_Warden == -1)
 	{
 		if (GetClientTeam(client) != CS_TEAM_CT)
@@ -211,7 +220,7 @@ void StartWarden(int client)
 		else
 		{
 			ResetWardenTimer();
-			s_WardenTimer = CreateTimer(60.0, TimerCallbackWarden, client, TIMER_REPEAT);
+			s_WardenTimer = CreateTimer(60.0, TimerCallbackWarden, GetClientUserId(client), TIMER_REPEAT);
 			s_Warden = client;
 			PrintCenterTextAll("%N is current Warden", s_Warden);
 			ReplyToCommand(client, "[URNA Warden] You are Warden now! !wmenu to open warden menu, !uw (!unwarden) to leave Warden, !o (!open) to open cells");
@@ -221,6 +230,8 @@ void StartWarden(int client)
 			char newName[MAX_NAME_LENGTH];
 			Format(newName, sizeof(newName), "WARDEN %s", name);
 			SetClientName(client, newName);
+			
+			OnWardenChanged(s_Warden);
 		}
 	}
 	else
@@ -245,8 +256,9 @@ public Action CMDWarden(int client, int argc)
 	return Plugin_Handled;
 }
 
-public Action TimerCallbackWarden(Handle plugin, int client)
+public Action TimerCallbackWarden(Handle plugin, int userid)
 {
+	int client = GetClientOfUserId(userid);
 	if (client == s_Warden)
 	{
 		OnWardenMinute(client);
@@ -269,6 +281,8 @@ public Action CMDUnwarden(int client, int args)
 			strcopy(newName, sizeof(newName), name[7]);
 			SetClientName(client, newName);
 		}
+		
+		OnWardenChanged(-1);
 	}
 	else
 	{
