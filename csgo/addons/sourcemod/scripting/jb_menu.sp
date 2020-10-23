@@ -13,6 +13,7 @@
 #include <jb_vip>
 #include <jb_jailbreak>
 #include <jb_menu>
+#include <HUD>
 
 #pragma newdecls required
 
@@ -47,7 +48,7 @@ public Plugin myinfo =
 
 #define TIME_FOR_SHOP 120.0
 
-static int s_Points[MAXPLAYERS + 1] = 0;
+static int s_Points[MAXPLAYERS + 1] = {0, ...};
 static ArrayList s_BoughtWeapons;
 static ArrayList s_NormalItems;
 static ArrayList s_VipItems;
@@ -111,19 +112,19 @@ enum struct ShopItem
 		if (s_Points[client] < this.price)
 		{
 			if (notify)
-				NotifyPlayerHud(client, "Sorry, you don't have enough points for this item");
+				OnPlayerGetItem(client, "Sorry, you don't have enough points for this item");
 			return false;
 		}
 		if (this.vipOnly == VM_Vip && !IsClientVip(client))
 		{
 			if (notify)
-				NotifyPlayerHud(client, "Sorry, you need to be VIP to get this item");
+				OnPlayerGetItem(client, "Sorry, you need to be VIP to get this item");
 			return false;
 		}
 		if (this.vipOnly == VM_ExtraVip && !IsClientExtraVip(client))
 		{
 			if (notify)
-				NotifyPlayerHud(client, "Sorry, you need to be ExtraVIP to get this item");
+				OnPlayerGetItem(client, "Sorry, you need to be ExtraVIP to get this item");
 			return false;
 		}
 		
@@ -143,7 +144,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_hammer");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Kladivo");
+			OnPlayerGetItem(client, "Máš Kladivo");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Hammer", client);
 		}
 		else if (!strcmp(this.hashName, "spanner"))
@@ -151,7 +152,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_spanner");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Kľúč");
+			OnPlayerGetItem(client, "Máš Kľúč");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Spanner", client);
 		}
 		else if (!strcmp(this.hashName, "axe"))
@@ -159,7 +160,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_axe");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Sekeru");
+			OnPlayerGetItem(client, "Máš Sekeru");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Axe", client);
 		}
 		else if (!strcmp(this.hashName, "knife"))
@@ -167,7 +168,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_knife");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Nôž");
+			OnPlayerGetItem(client, "Máš Nôž");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Knife", client);
 		}
 		else if (!strcmp(this.hashName, "taser"))
@@ -175,7 +176,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_taser");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Taser - Zeus");
+			OnPlayerGetItem(client, "Máš Taser - Zeus");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Taser - Zeus", client);
 		}
 		else if (!strcmp(this.hashName, "healthshot"))
@@ -183,21 +184,21 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_healthshot");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Adrenalín");
+			OnPlayerGetItem(client, "Máš Adrenalín");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Healthshot", client);
 		}
 		else if (!strcmp(this.hashName, "kevlar"))
 		{
 			SetPlayerArmor(client, 100);
 			
-			NotifyPlayerHud(client, "Máš Vestu");
+			OnPlayerGetItem(client, "Máš Vestu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N bought Kevlar", client);
 		}
 		else if (!strcmp(this.hashName, "helmet"))
 		{
 			SetPlayerHelmet(client, true);
 			
-			NotifyPlayerHud(client, "Máš Helmu");
+			OnPlayerGetItem(client, "Máš Helmu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Helmet", client);
 		}
 		else if (!strcmp(this.hashName, "kevlarhelmet"))
@@ -205,7 +206,7 @@ enum struct ShopItem
 			SetPlayerArmor(client, 100);
 			SetPlayerHelmet(client, true);
 			
-			NotifyPlayerHud(client, "Máš Vestu + Helmu");
+			OnPlayerGetItem(client, "Máš Vestu + Helmu");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Kevlar + Helmet", client);
 		}
 		else if (!strcmp(this.hashName, "hegrenade"))
@@ -213,7 +214,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_hegrenade");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Granát");
+			OnPlayerGetItem(client, "Máš Granát");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got HE Grenade", client);
 		}
 		else if (!strcmp(this.hashName, "flashbang"))
@@ -221,7 +222,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_flashbang");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Flash");
+			OnPlayerGetItem(client, "Máš Flash");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Flashbang", client);
 		}
 		else if (!strcmp(this.hashName, "smoke"))
@@ -229,7 +230,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_smokegrenade");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Smoke");
+			OnPlayerGetItem(client, "Máš Smoke");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Smoke", client);
 		}
 		else if (!strcmp(this.hashName, "molotov"))
@@ -237,7 +238,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_molotov");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Molotov");
+			OnPlayerGetItem(client, "Máš Molotov");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Molotov", client);
 		}
 		else if (!strcmp(this.hashName, "tagrenade"))
@@ -245,7 +246,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_tagrenade");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Taktický Granát");
+			OnPlayerGetItem(client, "Máš Taktický Granát");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Tactical Awareness Grenade", client);
 		}
 		else if (!strcmp(this.hashName, "breachcharge"))
@@ -253,7 +254,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_breachcharge");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Výbušniny");
+			OnPlayerGetItem(client, "Máš Výbušniny");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Breach charge", client);
 		}
 		else if (!strcmp(this.hashName, "shield"))
@@ -261,7 +262,7 @@ enum struct ShopItem
 			int weapon = GivePlayerItem(client, "weapon_shield");
 			s_BoughtWeapons.Push(weapon);
 			
-			NotifyPlayerHud(client, "Máš Štít");
+			OnPlayerGetItem(client, "Máš Štít");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Shield", client);
 		}
 		else if (!strcmp(this.hashName, "heavy"))
@@ -276,14 +277,14 @@ enum struct ShopItem
 			weapon = GivePlayerItem(client, "item_heavyassaultsuit");
 			s_BoughtWeapons.Push(weapon);
 
-			NotifyPlayerHud(client, "Máš Ťažkoodeneckú Výzbroj");
+			OnPlayerGetItem(client, "Máš Ťažkoodeneckú Výzbroj");
 			NotifyTeamChat(client, "[URNA Shop] Player %N got Heavy Assault Suit", client);
 		}
 		else if (!strcmp(this.hashName, "djump"))
 		{
 			EnableDoubleJump(client, true);
 			
-			NotifyPlayerHud(client, "Máš Dvojitý Skok");
+			OnPlayerGetItem(client, "Máš Dvojitý Skok");
 			NotifyTeamChat(client, "[URNA Shop] Player %N now has Double Jump", client);
 		}
 		else if (!strcmp(this.hashName, "fastwalk"))
@@ -294,7 +295,7 @@ enum struct ShopItem
 			KvSetNum(kv, "time", this.length - 1);
 			char message[256];
 			Format(message, sizeof(message), MESSAGE_FASTWALK, this.length);
-			NotifyPlayerHud(client, message);
+			OnPlayerGetItem(client, message);
 			CreateTimer(1.0, TimerCallbackFastWalk, kv, TIMER_REPEAT);
 			
 			NotifyTeamChat(client, "[URNA Shop] Player %N can move faster now", client);
@@ -307,7 +308,7 @@ enum struct ShopItem
 			KvSetNum(kv, "time", this.length - 1);
 			char message[256];
 			Format(message, sizeof(message), MESSAGE_INVISIBLE, this.length);
-			NotifyPlayerHud(client, message);
+			OnPlayerGetItem(client, message);
 			CreateTimer(1.0, TimerCallbackInvisibility, kv, TIMER_REPEAT);
 			
 			NotifyTeamChat(client, "[URNA Shop] Player %N is now invisible", client);
@@ -315,7 +316,7 @@ enum struct ShopItem
 		else if (!strcmp(this.hashName, "changeskin"))
 		{
 			SetPlayerModel(client, 0);
-			NotifyPlayerHud(client, "Vyzeráš ako dozorca!");
+			OnPlayerGetItem(client, "Vyzeráš ako dozorca!");
 			int weapon = GivePlayerItem(client, "weapon_m4a1_silencer");
 			SetPlayerAmmo(client, weapon, 0);
 			SetPlayerMagAmmo(weapon, 1);
@@ -326,7 +327,7 @@ enum struct ShopItem
 		{
 			char message[256];
 			Format(message, sizeof(message), MESSAGE_BLIND, this.length);
-			NotifyPlayerHud(client, message);
+			OnPlayerGetItem(client, message);
 			NotifyTeamChat(client, "[URNA Shop] Všetci dozorci sú slepí! Utekaj!", client);
 			for (int i = 1; i <= MaxClients; ++i)
 				if (IsClientValid(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_CT)
@@ -348,12 +349,12 @@ enum struct ShopItem
 			if (GetRandomInt(1, maxBound) == 1)
 			{
 				OpenDoors();
-				NotifyPlayerHud(client, "Podarilo sa ti otvoriť cely");
+				OnPlayerGetItem(client, "Podarilo sa ti otvoriť cely");
 				NotifyTeamChat(client, "%N have successfully opened cells doors", client);
 			}
 			else
 			{
-				NotifyPlayerHud(client, "Tentokrát to nevyšlo :(");
+				OnPlayerGetItem(client, "Tentokrát to nevyšlo :(");
 			}
 		}
 		else if (!strcmp(this.hashName, "fortune"))
@@ -510,7 +511,7 @@ public void OnClientPutInServer(int client)
 
 	s_Points[client] = 0;
 
-	RedrawPointsHud(client);
+	OnPointsChanged(client, s_Points[client]);
 }
 
 public Action OnPlayerDeathPost(Handle event, const char[] name, bool dontBroadcast)
@@ -533,7 +534,7 @@ public Action OnPlayerDeathPost(Handle event, const char[] name, bool dontBroadc
 		// NotifyPlayerPoints(attacker, "You got %i points for killing %N", plusPoints, victim);
 	}
 	
-	RedrawPointsHud(attacker);
+	OnPointsChanged(attacker, s_Points[attacker]);
 	return Plugin_Continue;
 }
 
@@ -570,7 +571,7 @@ public Action OnRoundStart(Handle event, const char[] name, bool dontBroadcast)
 			
 			s_Points[i] += plusPoints;
 			// NotifyPlayerPoints(i, "You got %i points for new round!", plusPoints);
-			RedrawPointsHud(i);
+			OnPointsChanged(i, s_Points[i]);
 		}
 	}
 	
@@ -588,7 +589,7 @@ public Action OnPlayerSpawnPost(int client)
 {
 	int team = GetClientTeam(client);
 	ShowMenuToPlayer(client, team);
-	RedrawPointsHud(client);
+	OnPointsChanged(client, s_Points[client]);
 }
 
 public Action CMDMenu(int client, int args)
@@ -665,7 +666,7 @@ public Action CMDSetPoints(int client, int argc)
 	for (int i = 0; i < targetCount; ++i)
 	{
 		s_Points[targetList[i]] = points;
-		RedrawPointsHud(targetList[i]);
+		OnPointsChanged(targetList[i], s_Points[targetList[i]]);
 	}
 	
 	return Plugin_Handled;
@@ -909,71 +910,71 @@ public int MenuCallbackShop(Menu menu, MenuAction action, int param1, int param2
 			/*if (StrEqual(itemName, "hammer"))
 			{
 				GivePlayerItem(param1, "weapon_hammer");
-				NotifyPlayerHud(param1, "You got Hammer");
+				OnPlayerGetItem(param1, "You got Hammer");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "spanner"))
 			{
 				GivePlayerItem(param1, "weapon_spanner");
-				NotifyPlayerHud(param1, "You got Wrench");
+				OnPlayerGetItem(param1, "You got Wrench");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "axe"))
 			{
 				GivePlayerItem(param1, "weapon_axe");
-				NotifyPlayerHud(param1, "You got Axe");
+				OnPlayerGetItem(param1, "You got Axe");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "knife"))
 			{
 				GivePlayerItem(param1, "weapon_knife");
-				NotifyPlayerHud(param1, "You got Knife");
+				OnPlayerGetItem(param1, "You got Knife");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "taser"))
 			{
 				GivePlayerItem(param1, "weapon_taser");
-				NotifyPlayerHud(param1, "You got Zeus");
+				OnPlayerGetItem(param1, "You got Zeus");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "healthshot"))
 			{
 				GivePlayerItem(param1, "weapon_healthshot");
-				NotifyPlayerHud(param1, "You got Healthshot");
+				OnPlayerGetItem(param1, "You got Healthshot");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "hegrenade"))
 			{
 				GivePlayerItem(param1, "weapon_hegrenade");
-				NotifyPlayerHud(param1, "You got HE Grenade");
+				OnPlayerGetItem(param1, "You got HE Grenade");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "flashbang"))
 			{
 				GivePlayerItem(param1, "weapon_flashbang");
-				NotifyPlayerHud(param1, "You got Flashbang");
+				OnPlayerGetItem(param1, "You got Flashbang");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "smoke"))
 			{
 				GivePlayerItem(param1, "weapon_smokegrenade");
-				NotifyPlayerHud(param1, "You got Smoke");
+				OnPlayerGetItem(param1, "You got Smoke");
 				NotifyPrisonerChat(param1, "Player %N got Hammer", param1);
 			}
 			else if (StrEqual(itemName, "molotov"))
 			{
 				GivePlayerItem(param1, "weapon_molotov");
-				NotifyPlayerHud(param1, "You got Molotov");
+				OnPlayerGetItem(param1, "You got Molotov");
 				NotifyPrisonerChat(param1, "Player %N got Molotov", param1);
 			}
 			else if (StrEqual(itemName, "breachcharge"))
 			{
 				GivePlayerItem(param1, "weapon_breachcharge");
-				NotifyPlayerHud(param1, "You got Breach Charge");
+				OnPlayerGetItem(param1, "You got Breach Charge");
 				NotifyPrisonerChat(param1, "Player %N got Breach Charge", param1);
 			}*/
 			
-			RedrawPointsHud(param1);
+			OnPointsChanged(param1, s_Points[param1]);
 		}
 		case MenuAction_End:
 			delete menu;
@@ -995,7 +996,7 @@ public Action TimerCallbackFastWalk(Handle timer, Handle kv)
 	if (time == 0)
 	{
 		SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 1.0);
-		NotifyPlayerHud(client, "You can no longer move fast!");
+		OnPlayerGetItem(client, "You can no longer move fast!");
 		CloseHandle(kv);
 		KillTimer(timer);
 	}
@@ -1003,7 +1004,7 @@ public Action TimerCallbackFastWalk(Handle timer, Handle kv)
 	{
 		char message[255];
 		Format(message, sizeof(message), MESSAGE_FASTWALK, time);
-		NotifyPlayerHud(client, message);
+		OnPlayerGetItem(client, message);
 		KvSetNum(kv, "time", time - 1);
 	}
 }
@@ -1015,7 +1016,7 @@ public Action TimerCallbackInvisibility(Handle timer, Handle kv)
 	if (time == 0)
 	{
 		SetPlayerVisible(client);
-		NotifyPlayerHud(client, "You are visible now!");
+		OnPlayerGetItem(client, "You are visible now!");
 		CloseHandle(kv);
 		KillTimer(timer);
 	}
@@ -1023,7 +1024,7 @@ public Action TimerCallbackInvisibility(Handle timer, Handle kv)
 	{
 		char message[255];
 		Format(message, sizeof(message), MESSAGE_INVISIBLE, time);
-		NotifyPlayerHud(client, message);
+		OnPlayerGetItem(client, message);
 		KvSetNum(kv, "time", time - 1);
 	}
 }
@@ -1038,7 +1039,7 @@ public Action TimerCallbackBlind(Handle timer, Handle kv)
 			if (IsClientValid(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_CT)
 				ServerCommand("sm_blind #%i 0", GetClientUserId(i));
 				
-		NotifyPlayerHud(client, "Guards can see now!");
+		OnPlayerGetItem(client, "Guards can see now!");
 		CloseHandle(kv);
 		KillTimer(timer);
 	}
@@ -1046,7 +1047,7 @@ public Action TimerCallbackBlind(Handle timer, Handle kv)
 	{
 		char message[255];
 		Format(message, sizeof(message), MESSAGE_BLIND, time);
-		NotifyPlayerHud(client, message);
+		OnPlayerGetItem(client, message);
 		KvSetNum(kv, "time", time - 1);
 	}
 }
@@ -1082,28 +1083,6 @@ public Action TimerCallbackFortune(Handle timer, int client)
 	}
 }
 
-void RedrawPointsHud(int client)
-{
-	SetHudTextParams(-1.0, 0.92, 9999.0, 255, 255, 255, 255, 0);
-	ShowHudText(client, 1, "Points: %d", s_Points[client]);
-}
-
-void NotifyPlayerHud(int client, const char[] format, any ...)
-{
-	char message[256];
-	VFormat(message, sizeof(message), format, 3);
-	SetHudTextParams(-1.0, 0.4, 5.0, 255, 255, 255, 255, 0, 1.0);
-	ShowHudText(client, 2, message);
-}
-
-/*void NotifyPlayerPoints(int client, const char[] format, any ...)
-{
-	char message[256];
-	VFormat(message, sizeof(message), format, 3);
-	SetHudTextParams(-1.0, 0.6, 5.0, 255, 255, 255, 255, 0, 1.0);
-	ShowHudText(client, 3, message);
-}*/
-
 void NotifyTeamChat(int client, const char[] format, any ...)
 {
 	int team = GetClientTeam(client);
@@ -1132,7 +1111,7 @@ public int __OnWardenMinute(Handle plugin, int argc)
 		
 		s_Points[client] += plusPoints;
 		// NotifyPlayerPoints(client, "You got %i points for being warden for 1 minute", plusPoints);
-		RedrawPointsHud(client);
+		OnPointsChanged(client, s_Points[client]);
 	}
 }
 
@@ -1151,6 +1130,6 @@ public int __AddPointsForFrag(Handle plugin, int argc)
 		
 		s_Points[attacker] += plusPoints;
 		// NotifyPlayerPoints(attacker, "You got %i points for killing %N", plusPoints, victim);
-		RedrawPointsHud(attacker);
+		OnPointsChanged(attacker, s_Points[attacker]);
 	}
 }
