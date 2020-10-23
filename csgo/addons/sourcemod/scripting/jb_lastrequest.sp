@@ -506,7 +506,8 @@ public Action OnPlayerBlind(Handle event, const char[] name, bool dontBroadcast)
 
 public Action OnWeaponFire(Handle event, const char[] name, bool dontBroadcast)
 {
-	if (s_ActiveLr == LR_S4S_DEAGLE || s_ActiveLr == LR_S4S_REVOLVER)
+	if (s_ActiveLr == LR_S4S_DEAGLE || s_ActiveLr == LR_S4S_REVOLVER || s_ActiveLr == LR_S4S_CZ75 || s_ActiveLr == LR_S4S_DUALS || s_ActiveLr == LR_S4S_FIVESEVEN ||
+		s_ActiveLr == LR_S4S_GLOCK || s_ActiveLr == LR_S4S_P2000 || s_ActiveLr == LR_S4S_USP || s_ActiveLr == LR_S4S_TEC9)
 	{
 		int client = GetClientOfUserId(GetEventInt(event, "userid"));
 		if (client == s_LrPlayerT)
