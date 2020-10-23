@@ -1,7 +1,7 @@
-#if defined JB_HUD_INC
+#if defined HUD_INC
  #endinput
 #endif
-#define JB_HUD_INC
+#define HUD_INC
 
 native void OnPointsChanged(int client, int numPoints);
 native void OnSkinChanged(int client, const char[] skinName);
