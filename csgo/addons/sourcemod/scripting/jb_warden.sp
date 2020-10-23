@@ -86,6 +86,7 @@ public void OnPluginStart()
 	HookEvent("player_death", OnPlayerDeath);
 	HookEvent("round_start", OnRoundStart);
 	HookEvent("round_end", OnRoundEnd);
+	HookEvent("player_team", OnPlayerChangeTeam);
 	
 	s_TeamA = new ArrayList(MAXPLAYERS + 1);
 	ClearArray(s_TeamA);
@@ -202,6 +203,12 @@ public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
 	s_BoxMode = BM_NONE;
 }
 
+public Action OnPlayerChangeTeam(Handle event, const char[] name, bool dontBroadcast)
+{
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	EndWarden(client);
+}
+
 void StartWarden(int client)
 {
 	if (!IsClientValid(client))
@@ -240,6 +247,34 @@ void StartWarden(int client)
 	}
 }
 
+void EndWarden(int client)
+{
+	if (!IsClientValid(client))
+		return;
+	
+	if (client == s_Warden)
+	{
+		ResetWardenTimer();
+		PrintCenterTextAll("%N is not Warden anymore", s_Warden);
+		ReplyToCommand(client, "[URNA Warden] You are not Warden anymore");
+		s_Warden = -1;
+		char name[MAX_NAME_LENGTH];
+		GetClientName(client, name, sizeof(name));
+		if (String_StartsWith(name, "WARDEN "))
+		{
+			char newName[MAX_NAME_LENGTH];
+			strcopy(newName, sizeof(newName), name[7]);
+			SetClientName(client, newName);
+		}
+		
+		OnWardenChanged(-1);
+	}
+	else
+	{
+		ReplyToCommand(client, "[URNA Warden] You are not Warden");
+	}
+}
+
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs)
 {
 	if (StrEqual(sArgs, "!W", true))
@@ -267,28 +302,7 @@ public Action TimerCallbackWarden(Handle plugin, int userid)
 
 public Action CMDUnwarden(int client, int args)
 {
-	if (client == s_Warden)
-	{
-		ResetWardenTimer();
-		PrintCenterTextAll("%N is not Warden anymore", s_Warden);
-		ReplyToCommand(client, "[URNA Warden] You are not Warden anymore");
-		s_Warden = -1;
-		char name[MAX_NAME_LENGTH];
-		GetClientName(client, name, sizeof(name));
-		if (String_StartsWith(name, "WARDEN "))
-		{
-			char newName[MAX_NAME_LENGTH];
-			strcopy(newName, sizeof(newName), name[7]);
-			SetClientName(client, newName);
-		}
-		
-		OnWardenChanged(-1);
-	}
-	else
-	{
-		ReplyToCommand(client, "[URNA Warden] You are not Warden");
-	}
-	
+	EndWarden(client);
 	return Plugin_Handled;
 }
 
