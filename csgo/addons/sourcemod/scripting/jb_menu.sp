@@ -33,12 +33,12 @@ public Plugin myinfo =
 #define MESSAGE_FASTWALK "You can now move faster. %i seconds remaining"
 #define MESSAGE_BLIND "All guards are blind. %i seconds remaining"
 
-#define POINTS_NEW_ROUND_NORMAL 10
-#define POINTS_NEW_ROUND_VIP 12
-#define POINTS_NEW_ROUND_EVIP 15
-#define POINTS_KILL_T_NORMAL 15
-#define POINTS_KILL_T_VIP 18
-#define POINTS_KILL_T_EVIP 20
+#define POINTS_NEW_ROUND_NORMAL 5
+#define POINTS_NEW_ROUND_VIP 7
+#define POINTS_NEW_ROUND_EVIP 10
+#define POINTS_KILL_T_NORMAL 10
+#define POINTS_KILL_T_VIP 12
+#define POINTS_KILL_T_EVIP 15
 #define POINTS_MIN_WARDEN_NORMAL 3
 #define POINTS_MIN_WARDEN_VIP 4
 #define POINTS_MIN_WARDEN_EVIP 5
