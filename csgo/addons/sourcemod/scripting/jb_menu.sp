@@ -406,7 +406,7 @@ public void OnPluginStart()
 	s_ShopItemsT.PushArray(item);
 	item.Create("taser", "Taser / Zeus", 50, VM_Vip);
 	s_ShopItemsT.PushArray(item);
-	item.Create("healthshot", "Adrenalín", 30, VM_None);
+	item.Create("healthshot", "Adrenalín", 20, VM_None);
 	s_ShopItemsT.PushArray(item);
 	item.Create("hegrenade", "Výbušný granát", 15, VM_None);
 	s_ShopItemsT.PushArray(item);
@@ -420,23 +420,23 @@ public void OnPluginStart()
 	s_ShopItemsT.PushArray(item);
 	item.Create("kevlar", "Vesta", 20, VM_None);
 	s_ShopItemsT.PushArray(item);
-	item.Create("kevlarhelmet", "Vesta + Helma", 40, VM_None);
+	item.Create("kevlarhelmet", "Vesta + Helma", 30, VM_None);
 	s_ShopItemsT.PushArray(item);
 	item.Create("breachcharge", "Explozívna nálož", 70, VM_ExtraVip);
 	s_ShopItemsT.PushArray(item);
-	item.Create("djump", "Dvojitý skok", 50, VM_None);
+	item.Create("djump", "Dvojitý skok", 40, VM_None);
 	s_ShopItemsT.PushArray(item);
-	item.Create("fastwalk", "Zrýchlený pohyb", 60, VM_None, 5);
+	item.Create("fastwalk", "Zrýchlený pohyb", 50, VM_None, 5);
 	s_ShopItemsT.PushArray(item);
 	item.Create("invisibility", "Neviditeľnosť", 80, VM_None, 5);
 	s_ShopItemsT.PushArray(item);
-	item.Create("changeskin", "Prevlek dozorcu", 80, VM_None);
+	item.Create("changeskin", "Prevlek dozorcu", 60, VM_None);
 	s_ShopItemsT.PushArray(item);
 	item.Create("blind", "Oslepiť dozorcov", 100, VM_Vip, 10);
 	s_ShopItemsT.PushArray(item);
 	item.Create("open", "Šanca na otvorenie ciel - VIP 25%, ExtraVIP 50%", 60, VM_Vip);
 	s_ShopItemsT.PushArray(item);
-	item.Create("fortune", "Koleso šťastia", 50, VM_None);
+	item.Create("fortune", "Koleso šťastia", 40, VM_None);
 	s_ShopItemsT.PushArray(item);
 	
 	s_NormalItems = new ArrayList();
