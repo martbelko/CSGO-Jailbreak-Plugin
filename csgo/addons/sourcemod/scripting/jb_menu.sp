@@ -757,8 +757,15 @@ public int MenuCallbackMainT(Menu menu, MenuAction action, int param1, int param
 			{
 				if (team == CS_TEAM_T)
 				{
-					Menu newMenu = CreateMenuShopT();
-					newMenu.Display(param1, MENU_TIME_FOREVER);
+					if (!s_ShopEnabled)
+					{
+						OnPlayerGetItem(param1, "Nesnaž sa ma oj*bať, 2 minúty prešli už dávno :)");
+					}
+					else
+					{
+						Menu newMenu = CreateMenuShopT();
+						newMenu.Display(param1, MENU_TIME_FOREVER);
+					}
 				}
 			}
 			else if (StrEqual(itemName, "rules"))
@@ -801,8 +808,15 @@ public int MenuCallbackMainCt(Menu menu, MenuAction action, int param1, int para
 			{
 				if (team == CS_TEAM_CT)
 				{
-					Menu newMenu = CreateMenuShopCt();
-					newMenu.Display(param1, MENU_TIME_FOREVER);
+					if (!s_ShopEnabled)
+					{
+						OnPlayerGetItem(param1, "Nesnaž sa ma oj*bať, 2 minúty prešli už dávno :)");
+					}
+					else
+					{
+						Menu newMenu = CreateMenuShopCt();
+						newMenu.Display(param1, MENU_TIME_FOREVER);
+					}
 				}
 			}
 			else if (StrEqual(itemName, "rules"))
