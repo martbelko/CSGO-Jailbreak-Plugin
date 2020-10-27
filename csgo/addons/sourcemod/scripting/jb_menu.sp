@@ -79,10 +79,10 @@ enum struct ShopItem
 		
 		if (this.length > 0.0)
 		{
-			FormatEx(buffer, sizeof(buffer), "%i", this.length);
+			/*FormatEx(buffer, sizeof(buffer), "%i", this.length);
 			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " /");
 			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, buffer);
-			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " seconds /");
+			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " seconds /");*/
 		}
 		
 		IntToString(price_t, buffer, sizeof(buffer));
@@ -379,10 +379,35 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 	return APLRes_Success;
 }
 
+void SortByPoints(ArrayList array)
+{
+	ShopItem item1, item2;
+	for (int i = 1; i < array.Length; ++i)
+	{
+		array.GetArray(i, item1);
+		int key = item1.price;
+
+		int j = i - 1;
+		array.GetArray(j, item2);
+		int prevPrice = item2.price;
+
+		while (prevPrice > key)
+		{
+			array.SetArray(j + 1, item2);
+			--j;
+			if (j < 0)
+				break;
+
+			array.GetArray(j, item2);
+			prevPrice = item2.price;
+		}
+
+		array.SetArray(j + 1, item1);
+	}
+}
+
 public void OnPluginStart()
 {
-	LoadTranslations("jb_menu.phrases");
-	
 	HookEvent("player_death", OnPlayerDeathPost, EventHookMode_Post);
 	HookEvent("round_start", OnRoundStart, EventHookMode_Post);
 	HookEvent("round_end", OnRoundEnd, EventHookMode_Post);
@@ -432,12 +457,14 @@ public void OnPluginStart()
 	s_ShopItemsT.PushArray(item);
 	item.Create("changeskin", "Prevlek dozorcu", 60, VM_None);
 	s_ShopItemsT.PushArray(item);
-	item.Create("blind", "Oslepiť dozorcov", 100, VM_Vip, 10);
+	item.Create("blind", "Oslepiť dozorcov", 200, VM_Vip, 10);
 	s_ShopItemsT.PushArray(item);
 	item.Create("open", "Šanca na otvorenie ciel - VIP 25%, ExtraVIP 50%", 60, VM_Vip);
 	s_ShopItemsT.PushArray(item);
-	item.Create("fortune", "Koleso šťastia", 40, VM_None);
+	item.Create("fortune", "Koleso šťastia", 30, VM_None);
 	s_ShopItemsT.PushArray(item);
+	
+	SortByPoints(s_ShopItemsT);
 	
 	s_NormalItems = new ArrayList();
 	s_VipItems = new ArrayList();
@@ -468,6 +495,8 @@ public void OnPluginStart()
 	s_ShopItemsCt.PushArray(item);
 	item.Create("heavy", "Tažkoodenecká výzbroj", 70, VM_ExtraVip);
 	s_ShopItemsCt.PushArray(item);
+	
+	SortByPoints(s_ShopItemsCt);
 	
 	s_BoughtWeapons = new ArrayList();
 	
@@ -658,6 +687,8 @@ public Action CMDSetPoints(int client, int argc)
 	{
 		s_Points[targetList[i]] = points;
 		OnPointsChanged(targetList[i], s_Points[targetList[i]]);
+		ShowActivity2(client, "[URNA] ", "%N set shop points of %N to %i", client, targetList[i], points);
+		LogToFile("Log.log", "\"%L\" set shop points of \"%L\" to %i", client, targetList[i], points);
 	}
 	
 	return Plugin_Handled;
