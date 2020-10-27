@@ -179,6 +179,8 @@ public Action OnEntitySpawn(int entity)
 public Action CMDOpenDoors(int client, int args)
 {
 	OpenDoors();
+	ShowActivity2(client, "[URNA] ", "%N opened cell doors", client);
+	LogToFile("Log.log", "\"%L\" opened cell doors", client);
 	return Plugin_Handled;
 }
 
@@ -212,6 +214,8 @@ public Action CMDInvisible(int client, int argc)
 	{
 		SetPlayerInvisible(targetList[i]);
 		ReplyToCommand(client, "[URNA] %N is now invisible", targetList[i]);
+		ShowActivity2(client, "[URNA] ", "%N sets invisibility for %N", client, targetList[i]);
+		LogToFile("Log.log", "\"%L\" sets invisibility for \"%L\"", client, targetList[i]);
 	}
 	
 	return Plugin_Handled;
