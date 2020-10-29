@@ -58,6 +58,7 @@ public void OnPluginStart()
 	HookEvent("round_start", OnRoundStartPost, EventHookMode_Pre);
 	HookEvent("player_hurt", OnPlayerHurt, EventHookMode_Post);
 	HookEvent("player_death", OnPlayerDeath, EventHookMode_Post);
+	HookEvent("player_team", OnPlayerTeam, EventHookMode_Post);
 	
 	HookUserMessage(GetUserMessageId("SayText2"), SayText2, true);
 	
@@ -229,13 +230,35 @@ public Action OnPlayerDeath(Handle event, const char[] name, bool dontBroadcast)
 	}
 }
 
+public Action OnPlayerTeam(Handle event, const char[] name, bool dontBroadcast)
+{
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int team = GetEventInt(event, "team");
+	if (IsClientValid(client) && !IsAdmin(client))
+	{
+		if (team == CS_TEAM_T)
+		{
+			if (IsClientVip(client) && IsPlayerAlive(client))
+				SetClientListeningFlags(client, VOICE_NORMAL);
+			else
+				SetClientListeningFlags(client, VOICE_MUTED);
+		}
+		else if (team == CS_TEAM_CT)
+		{
+			if (IsPlayerAlive(client))
+				SetClientListeningFlags(client, VOICE_NORMAL);
+		}
+	}
+}
+
 public Action OnFullConnectPost(Handle event, const char[] name_t, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	if (!IsClientValid(client) || IsFakeClient(client) || IsClientSourceTV(client))
+		return Plugin_Continue;
+
 	ChangeClientTeam(client, CS_TEAM_T);
-	
 	CreateTimer(1.0, TimerCallbackChangeClan, GetClientUserId(client));
-	
 	return Plugin_Continue;
 }
 
@@ -274,7 +297,13 @@ public Action OnPlayerSpawnPost(int client)
 	CreateTimer(0.5, TImerCallbackGiveWeapons, userid);
 	
 	// TODO: Add check for sm_mute command
-	SetClientListeningFlags(client, VOICE_NORMAL);
+	if (!IsClientVip(client) && GetClientTeam(client) == CS_TEAM_T)
+	{
+		SetClientListeningFlags(client, VOICE_MUTED);
+		PrintToChat(client, "You have been muted");
+	}
+	else
+		SetClientListeningFlags(client, VOICE_NORMAL);
 	
 	g_Rebels[client] = false;
 	
@@ -412,9 +441,9 @@ public Action TimerShowPlayerHud(Handle timer, int userid)
 		SetHudTextParams(-1.0, 0.59, 0.4, 255, 0, 0, 255, 1);
 	
 	if (IsClientVip(client))
-		ShowSyncHudText(client, s_Hud, "%N [%d]", target, GetClientHealth(target));
+		ShowHudText(client, 4, "%N [%d]", target, GetClientHealth(target));
 	else
-		ShowSyncHudText(client, s_Hud, "%N", target);
+		ShowHudText(client, 4, "%N", target);
 	
 	return Plugin_Continue;
 }
