@@ -77,14 +77,6 @@ enum struct ShopItem
 		
 		char buffer[10];
 		
-		if (this.length > 0.0)
-		{
-			/*FormatEx(buffer, sizeof(buffer), "%i", this.length);
-			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " /");
-			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, buffer);
-			StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " seconds /");*/
-		}
-		
 		IntToString(price_t, buffer, sizeof(buffer));
 		StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, " [");
 		StrCat(this.shopName, MAX_ITEM_SHOP_NAME_LENGTH, buffer);
