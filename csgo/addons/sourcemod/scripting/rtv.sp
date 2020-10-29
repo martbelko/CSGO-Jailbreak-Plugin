@@ -74,6 +74,7 @@ public void OnPluginStart()
 	
 	RegConsoleCmd("sm_rtv", CMDRTV, "Rock The Vote");
 	RegConsoleCmd("sm_rockthevote", CMDRTV, "Rock The Vote");
+	RegConsoleCmd("sm_testrtv", CMDTestRtv);
 	
 	RegConsoleCmd("sm_nextmap", CMDNextMap, "NextMap");
 	RegConsoleCmd("nextmap", CMDNextMap, "NextMap");
@@ -127,7 +128,7 @@ public Action CMDFakeCmd(int client, int argc)
 
 public void OnClientConnected(int client)
 {
-	if (!IsFakeClient(client))
+	if (!IsFakeClient(client) && !IsClientSourceTV(client))
 	{
 		++s_Voters;
 		s_VotesNeeded = RoundToCeil(float(s_Voters) * s_NeededVotesPercentage);
@@ -145,7 +146,7 @@ public void OnClientDisconnect(int client)
 		s_Voted[client] = false;
 	}
 	
-	if (!IsFakeClient(client))
+	if (!IsFakeClient(client) && !IsClientSourceTV(client))
 	{
 		--s_Voters;
 		s_VotesNeeded = RoundToCeil(float(s_Voters) * s_NeededVotesPercentage);
@@ -254,6 +255,12 @@ public Action OnRoundStartPost(Handle event, const char[] name, bool dontBroadca
 public Action CMDRTV(int client, int argc)
 {
 	AttemptRTV(client);
+	return Plugin_Handled;
+}
+
+public Action CMDTestRtv(int client, int argc)
+{
+	ReplyToCommand(client, "%i, %i", s_Voters, s_VotesNeeded);
 	return Plugin_Handled;
 }
 
