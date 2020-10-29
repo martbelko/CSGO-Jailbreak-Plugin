@@ -7,10 +7,10 @@
 
 #include <sdktools>
 #include <sourcemod>
-#include <clientprefs>
 
 #include <jb_core>
 #include <jb_vip>
+#include <BaseComm>
 
 #pragma newdecls required
 
@@ -123,6 +123,15 @@ public Action SayHook(int client, const char[] command, int args)
 	GetCmdArg(1, szText, sizeof(szText));
 	if (!strcmp(szText, ""))
 		return Plugin_Handled;
+		
+	if (IsAdmin(client) && szText[0] == '@')
+		return Plugin_Handled;
+	
+	if (IsGagged(client))
+	{
+		PrintToChat(client, " \x07 You have been gagged!");
+		return Plugin_Handled;
+	}
 	
 	char text[512];
 	int team = GetClientTeam(client);
