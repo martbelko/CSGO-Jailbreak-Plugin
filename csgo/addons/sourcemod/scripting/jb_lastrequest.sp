@@ -82,7 +82,6 @@ void ResetLr()
 	s_LrDeagleLastOwner = -1;
 }
 
-
 Action StartLrNoLr(Handle timer, any arg)
 {
 	
@@ -684,11 +683,11 @@ public Action CMDLastRequest(int client, int args)
 		ReplyToCommand(client, "[URNA Last Request] You can use this command only if you are the last alive on T side");
 		return Plugin_Handled;
 	}
-	/*if (GetNumberOfPlayers(CS_TEAM_CT, true) == 0)
+	if (GetNumberOfPlayers(CS_TEAM_CT, true) == 0)
 	{
 		ReplyToCommand(client, "[URNA Last Request] You cannot use this command, nobody is alive on CT side");
 		return Plugin_Handled;
-	}*/
+	}
 	if (s_ActiveLr != LR_NO_LR)
 	{
 		ReplyToCommand(client, "[URNA Last Request] Last Request is still in progress");
