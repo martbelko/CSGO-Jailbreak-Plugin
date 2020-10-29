@@ -18,6 +18,7 @@
 #include <jb_menu>
 #include <jb_jailbreak>
 #include <BanSystem>
+#include <BaseComm>
 
 #pragma newdecls required
 
@@ -238,14 +239,14 @@ public Action OnPlayerTeam(Handle event, const char[] name, bool dontBroadcast)
 	{
 		if (team == CS_TEAM_T)
 		{
-			if (IsClientVip(client) && IsPlayerAlive(client))
+			if (IsClientVip(client) && IsPlayerAlive(client) && !IsMuted(client))
 				SetClientListeningFlags(client, VOICE_NORMAL);
 			else
 				SetClientListeningFlags(client, VOICE_MUTED);
 		}
 		else if (team == CS_TEAM_CT)
 		{
-			if (IsPlayerAlive(client))
+			if (IsPlayerAlive(client) && !IsMuted(client))
 				SetClientListeningFlags(client, VOICE_NORMAL);
 		}
 	}
@@ -296,13 +297,12 @@ public Action OnPlayerSpawnPost(int client)
 	CreateTimer(0.1, TimerHideRadar, userid);
 	CreateTimer(0.5, TImerCallbackGiveWeapons, userid);
 	
-	// TODO: Add check for sm_mute command
 	if (!IsClientVip(client) && GetClientTeam(client) == CS_TEAM_T)
 	{
 		SetClientListeningFlags(client, VOICE_MUTED);
 		PrintToChat(client, "You have been muted");
 	}
-	else
+	else if (!IsMuted(client))
 		SetClientListeningFlags(client, VOICE_NORMAL);
 	
 	g_Rebels[client] = false;
