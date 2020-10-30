@@ -293,7 +293,7 @@ public Action OnPlayerSpawnPost(int client)
 	SetEntProp(client, Prop_Send, "m_CollisionGroup", 5);
 	
 	int userid = GetClientUserId(client);
-	CreateTimer(0.1, TimerShowPlayerHud, userid, TIMER_REPEAT);
+	CreateTimer(0.1, TimerShowPlayerHud, userid, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 	CreateTimer(0.1, TimerHideRadar, userid);
 	CreateTimer(0.5, TImerCallbackGiveWeapons, userid);
 	
@@ -425,15 +425,9 @@ public Action TimerShowPlayerHud(Handle timer, int userid)
 	if (!IsClientValid(client)) // if player disconnect or is dead
 		return Plugin_Stop;
 	
-	int target = GetClientAimTarget(client, true);
-	if (!IsClientValid(target))
-		return Plugin_Handled;
-		
-	if (!IsVisibleTo(client, target))
-		return Plugin_Handled;
-	
-	if (IsPlayerInvisible(target))
-		return Plugin_Handled;
+	int target = TraceClientViewEntity(client);
+	if (!IsClientValid(target) || !IsPlayerAlive(target) || IsPlayerInvisible(target))
+		return Plugin_Continue;
 	
 	if (GetClientTeam(client) == GetClientTeam(target))
 		SetHudTextParams(-1.0, 0.59, 0.4, 0, 0, 255, 255, 1);
@@ -484,6 +478,54 @@ public Action TImerCallbackGiveWeapons(Handle timer, int userid)
 	}
 	
 	s_AllowDropWeapons = true;
+}
+
+int TraceClientViewEntity(int client)
+{
+	float m_vecOrigin[3];
+	float m_angRotation[3];
+
+	GetClientEyePosition(client, m_vecOrigin);
+	GetClientEyeAngles(client, m_angRotation);
+	
+	int observerTarget = GetEntPropEnt(client, Prop_Send, "m_hObserverTarget");
+	int mode = GetEntProp(client, Prop_Send, "m_iObserverMode");
+	
+	ArrayList ignored = CreateArray();
+	ignored.Push(client);
+	if (IsClientValid(observerTarget) && (mode == 4 || mode == 5))
+		ignored.Push(observerTarget);
+	
+	Handle tr = TR_TraceRayFilterEx(m_vecOrigin, m_angRotation, MASK_VISIBLE, RayType_Infinite, TRDontHitSelf, ignored);
+	delete ignored;
+	int hitEntity = -1;
+
+	if (TR_DidHit(tr))
+	{
+		hitEntity = TR_GetEntityIndex(tr);
+		CloseHandle(tr);
+		return hitEntity;
+	}
+
+	if (tr != INVALID_HANDLE)
+		CloseHandle(tr);
+	
+	return -1;
+}
+
+public bool TRDontHitSelf(int entity, int mask, any data)
+{
+	if (!IsClientValid(entity))
+		return false;
+	
+	ArrayList array = view_as<ArrayList>(data);
+	for (int i = 0; i < array.Length; ++i)
+	{
+		if (entity == array.Get(i))
+			return false;
+	}
+	
+	return true;
 }
 
 public Action CMDRules(int client, int argc)
