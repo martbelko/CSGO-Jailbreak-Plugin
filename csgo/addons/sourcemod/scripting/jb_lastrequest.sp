@@ -391,6 +391,7 @@ public void OnPluginStart()
 	HookEvent("grenade_thrown", OnGrenadeThrown, EventHookMode_Post);
 	HookEvent("player_blind", OnPlayerBlind);
 	HookEvent("weapon_fire", OnWeaponFire);
+	HookEvent("round_end", OnRoundEnd);
 	
 	for (int i = 1; i <= MaxClients; ++i)
 		if (IsClientInGame(i))
@@ -523,6 +524,11 @@ public Action OnWeaponFire(Handle event, const char[] name, bool dontBroadcast)
 	}
 	
 	return Plugin_Continue;
+}
+
+public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
+{
+	ResetLr();
 }
 
 public Action OnPreThink(int client)
