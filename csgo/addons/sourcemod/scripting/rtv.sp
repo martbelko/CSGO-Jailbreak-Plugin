@@ -26,10 +26,10 @@ public Plugin myinfo =
 #define MAX_LINE_LEN 64
 #define MIN_MAP_DELAY 3 // How many other maps should be player before the same map can be selected again
 #define s_NeededVotesPercentage 0.6
-#define s_InitialDelay 120.0 // Seconds
+#define s_InitialDelay 300.0 // Seconds
 #define s_RunOffPercentage 0.5
 #define s_MaxMapTime 45 // How many minutes can map be played before an automatic RTV
-#define s_ExtendTime 5 // Minutes
+#define s_ExtendTime 15 // Minutes
 
 enum RTVStatus
 {
@@ -91,8 +91,8 @@ public void OnPluginStart()
 	BuildPath(Path_SM, s_MapFilepath, sizeof(s_MapFilepath), "configs/maps.ini");
 	
 	for (int i = 1; i <= MaxClients; i++)
-		if (IsClientConnected(i))
-			OnClientConnected(i);
+		if (IsClientInGame(i))
+			OnClientPutInServer(i);
 }
 
 public Action CMDFakeCmd(int client, int argc)
@@ -126,7 +126,7 @@ public Action CMDFakeCmd(int client, int argc)
 	return Plugin_Handled;
 }
 
-public void OnClientConnected(int client)
+public void OnClientPutInServer(int client)
 {
 	if (!IsFakeClient(client) && !IsClientSourceTV(client))
 	{
@@ -137,9 +137,6 @@ public void OnClientConnected(int client)
 
 public void OnClientDisconnect(int client)
 {
-	if (s_RTVStatus == RTV_VOTE_FINISHED || s_RTVStatus == RTV_IN_CHANGE)
-		return;
-	
 	if (s_Voted[client])
 	{
 		--s_Votes;
