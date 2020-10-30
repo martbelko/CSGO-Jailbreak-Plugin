@@ -367,7 +367,8 @@ public Action TimerCallbackOnSpawn(Handle timer, Handle kv)
 {
 	int client = KvGetNum(kv, "client");
 	int index = KvGetNum(kv, "index");
-	UseModel(client, index);
+	if (IsClientValid(client))
+		UseModel(client, index);
 	CloseHandle(kv);
 }
 
@@ -449,7 +450,7 @@ void SetPlayerModelIndex(int client, int index, bool instant = false)
 	else if (team == CS_TEAM_CT)
 		s_PlayerCtModelIndex[client] = index;
 	
-	if (instant)
+	if (instant && IsClientValid(client))
 		UseModel(client, index);
 }
 
