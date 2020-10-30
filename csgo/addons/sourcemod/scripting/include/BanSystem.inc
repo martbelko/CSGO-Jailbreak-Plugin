@@ -10,4 +10,4 @@ enum BanType
 	BT_CT
 }
 
-native BanType IsBanned(const char[] auth, char[] error, int maxErrorLength);
+native BanType IsBanned(int client, char[] error, int maxErrorLength);

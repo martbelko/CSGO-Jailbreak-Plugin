@@ -42,7 +42,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 public void OnPluginStart()
 {
 	RegAdminCmd("sm_ban", CMDBan, ADMFLAG_BAN, "Ban player");
-	//RegAdminCmd("sm_addban", CMDAddBan, ADMFLAG_BAN, "Add ban by steamID");
+	// RegAdminCmd("sm_addban", CMDAddBan, ADMFLAG_BAN, "Add ban by steamID");
 	
 	RegAdminCmd("sm_ctban", CMDBan, ADMFLAG_BAN, "CT Ban");
 	// RegAdminCmd("sm_addctban", CMDAddBan, ADMFLAG_BAN, "Add CT Ban");
@@ -365,17 +365,20 @@ public Action TimerCallbackRemoveBans(Handle timer, any data)
 	return Plugin_Handled;
 }
 
-// native BanType IsBanned(const char[] auth, char[] error, int maxErrorLength);
+// native BanType IsBanned(int client, char[] error, int maxErrorLength);
 public int __IsBanned(Handle plugin, int argc)
 {
-	char auth[32];
-	GetNativeString(1, auth, sizeof(auth));
-	
-	char error[256];
+	int client = GetNativeCell(1);
 	int maxLength = GetNativeCell(3);
+	char steam2[32], steam3[32], steam64[32], ip[32];
+	GetClientAuthId(client, AuthId_Steam2, steam2, sizeof(steam2));
+	GetClientAuthId(client, AuthId_Steam3, steam3, sizeof(steam3));
+	GetClientAuthId(client, AuthId_SteamID64, steam64, sizeof(steam64));
+	GetClientIP(client, ip, sizeof(ip), true);
 	
-	char query[256];
-	Format(query, sizeof(query), "SELECT victimAuth, type FROM Banlist WHERE victimAuth='%s'", auth);
+	char error[256], query[512];
+	Format(query, sizeof(query), "SELECT targetSteam2, targetSteam3, targetSteam64, targetIP, reason, banType FROM Banlist WHERE targetSteam2='%s' || targetSteam3='%s' || targetSteam64='%s' || targetIP='%s' and banType=%i",
+	       steam2, steam3, steam64, ip, BT_CT);
 	DBResultSet queryResult = SQL_Query(DB, query);
 	if (queryResult == INVALID_HANDLE)
 	{
@@ -386,7 +389,7 @@ public int __IsBanned(Handle plugin, int argc)
 	
 	if (SQL_FetchRow(queryResult))
 	{
-		BanType type = view_as<BanType>(queryResult.FetchInt(1));
+		BanType type = view_as<BanType>(queryResult.FetchInt(5));
 		CloseHandle(queryResult);
 		return view_as<int>(type);
 	}
