@@ -26,7 +26,8 @@ public Plugin myinfo =
 	url = ""
 };
 
-#define MAX_REASON_LENGTH 128
+#define MAX_REASON_LENGTH 64
+#define MAX_ERROR_LENGTH  64
 
 static Handle DB = INVALID_HANDLE;
 
@@ -41,12 +42,12 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 public void OnPluginStart()
 {
 	RegAdminCmd("sm_ban", CMDBan, ADMFLAG_BAN, "Ban player");
-	RegAdminCmd("sm_addban", CMDAddBan, ADMFLAG_BAN, "Add ban by steamID");
+	//RegAdminCmd("sm_addban", CMDAddBan, ADMFLAG_BAN, "Add ban by steamID");
 	
-	RegAdminCmd("sm_ctban", CMDBan, ADMFLAG_BAN, "CT Ban");
-	RegAdminCmd("sm_addctban", CMDAddBan, ADMFLAG_BAN, "Add CT Ban");
+	// RegAdminCmd("sm_ctban", CMDBan, ADMFLAG_BAN, "CT Ban");
+	// RegAdminCmd("sm_addctban", CMDAddBan, ADMFLAG_BAN, "Add CT Ban");
 	
-	RegAdminCmd("sm_unban", CMDUnban, ADMFLAG_UNBAN, "Unban player");
+	// RegAdminCmd("sm_unban", CMDUnban, ADMFLAG_UNBAN, "Unban player");
 
 	char error[256];
 	DB = SQL_Connect("banlist", true, error, sizeof(error));
@@ -64,11 +65,15 @@ public void OnPluginStart()
 
 public void OnClientPostAdminCheck(int client)
 {
-	char auth[32];
-	GetClientAuthId(client, AuthId_Steam2, auth, sizeof(auth));
+	char steam2[32], steam3[32], steam64[32], ip[32];
+	GetClientAuthId(client, AuthId_Steam2, steam2, sizeof(steam2));
+	GetClientAuthId(client, AuthId_Steam3, steam3, sizeof(steam3));
+	GetClientAuthId(client, AuthId_SteamID64, steam64, sizeof(steam64));
+	GetClientIP(client, ip, sizeof(ip), true);
 	
-	char query[128];
-	Format(query, sizeof(query), "SELECT victimAuth, reason, type FROM Banlist WHERE victimAuth='%s' and type=%i", auth, BT_NORMAL);
+	char query[512];
+	Format(query, sizeof(query), "SELECT targetSteam2, targetSteam3, targetSteam64, targetIP, reason, banType FROM Banlist WHERE targetSteam2='%s' || targetSteam3='%s' || targetSteam64='%s' || targetIP='%s' and banType=%i",
+	       steam2, steam3, steam64, ip, BT_NORMAL);
 	DBResultSet queryResult = SQL_Query(DB, query);
 	if (queryResult == INVALID_HANDLE)
 	{
@@ -80,32 +85,51 @@ public void OnClientPostAdminCheck(int client)
 	
 	if (SQL_FetchRow(queryResult))
 	{
-		BanType type = view_as<BanType>(queryResult.FetchInt(2));
+		BanType type = view_as<BanType>(queryResult.FetchInt(5));
 		if (type == BT_NORMAL)
 		{
 			char reason[MAX_REASON_LENGTH];
-			queryResult.FetchString(1, reason, sizeof(reason));
+			queryResult.FetchString(4, reason, sizeof(reason));
 			KickClient(client, "You are banned. Reason: %s", reason);
 			
-			PrintToChatAll(" \x07 [URNA] Hráč %N\x07(%s) sa nemôže pripojiť, pretože je zabanovaný. Dôvod: %s", client, auth, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %N\x07(%s) sa nemôže pripojiť, pretože je zabanovaný. Dôvod: %s", client, steam2, reason);
 		}
 	}
 	
 	CloseHandle(queryResult);
 }
 
-bool AddSqlBan(const char[] adminAuth, const char[] adminName, const char[] targetAuth, const char[] targetName, const char[] reason, int banLength, BanType type, char[] error, int errorLength)
+enum struct BanItem
+{
+	char adminName[MAX_NAME_LENGTH];
+	char adminSteam2[32];
+	
+	char targetName[MAX_NAME_LENGTH];
+	char targetSteam2[32];
+	char targetSteam3[32];
+	char targetSteam64[32];
+	char targetIP[32]; // 192.168.100.100
+	
+	char reason[MAX_REASON_LENGTH];
+	int banLength;
+	BanType type;
+	char error[MAX_ERROR_LENGTH];
+}
+
+bool AddSqlBan(BanItem item)
 {
 	int curTime = GetTime();
 	char timeFormat[32];
 	FormatTime(timeFormat, sizeof(timeFormat), "%d/%m/%Y, %H:%M:%S", curTime);
 	
 	char query[256];
-	Format(query, sizeof(query), "INSERT INTO Banlist VALUES ('%s', '%s', '%s', '%s', '%s', '%i', '%i', '%s', '%i')", adminName, adminAuth, targetName, targetAuth, reason, banLength, view_as<int>(type), timeFormat, curTime);
+	Format(query, sizeof(query),
+	"INSERT INTO Banlist VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%i', '%i', '%i')",
+	item.adminName, item.adminSteam2, item.targetName, item.targetSteam2, item.targetSteam3, item.targetSteam64, item.targetIP, item.reason, item.banLength, view_as<int>(item.type), curTime);
 	DBResultSet queryResult = SQL_Query(DB, query);
 	if (queryResult == INVALID_HANDLE)
 	{
-		SQL_GetError(queryResult, error, errorLength);
+		SQL_GetError(queryResult, item.error, MAX_ERROR_LENGTH);
 		return false;
 	}
 	
@@ -152,13 +176,14 @@ public Action CMDBan(int client, int args)
 		return Plugin_Handled;
 	}
 	
+	BanItem item;
+	
 	char victimStr[MAX_NAME_LENGTH];
 	GetCmdArg(1, victimStr, sizeof(victimStr));
 	char lengthStr[32];
 	GetCmdArg(2, lengthStr, sizeof(lengthStr));
-	int banLength = StringToInt(lengthStr, 10);
-	char reason[MAX_REASON_LENGTH];
-	GetCmdArg(3, reason, sizeof(reason));
+	item.banLength = StringToInt(lengthStr, 10);
+	GetCmdArg(3, item.reason, sizeof(item.reason));
 
 	int targetList[MAXPLAYERS];
 	char targetName[MAX_NAME_LENGTH];
@@ -183,43 +208,50 @@ public Action CMDBan(int client, int args)
 		return Plugin_Handled;
 	}
 	
-	char adminAuth[32], victimAuth[32], victimName[MAX_NAME_LENGTH], adminName[MAX_NAME_LENGTH];
-	GetClientAuthId(client, AuthId_Steam2, adminAuth, sizeof(adminAuth));
-	GetClientAuthId(victim, AuthId_Steam2, victimAuth, sizeof(victimAuth));
-	GetClientName(client, adminName, sizeof(adminName));
-	GetClientName(victim, victimName, sizeof(victimName));
+	GetClientAuthId(client, AuthId_Steam2, item.adminSteam2, sizeof(item.adminSteam2));
+	GetClientAuthId(victim, AuthId_Steam2, item.targetSteam2, sizeof(item.targetSteam2));
+	GetClientAuthId(victim, AuthId_Steam3, item.targetSteam3, sizeof(item.targetSteam3));
+	GetClientAuthId(victim, AuthId_SteamID64, item.targetSteam64, sizeof(item.targetSteam64));
+	GetClientIP(victim, item.targetIP, sizeof(item.targetIP), true);
+	
+	GetClientName(client, item.adminName, sizeof(item.adminName));
+	GetClientName(victim, item.targetName, sizeof(item.targetName));
 	
 	char error[256];
-	BanType type = BT_NORMAL;
+	item.type = BT_NORMAL;
 	if (StrEqual(command, "sm_ctban"))
-		type = BT_CT;
-		
-	if (!AddSqlBan(adminAuth, adminName, victimAuth, victimName, reason, banLength, type, error, sizeof(error)))
+		item.type = BT_CT;
+	
+	if (!AddSqlBan(item))
 	{
 		ReplyToCommand(client, error);
 		return Plugin_Handled;
 	}
 	
-	if (type == BT_NORMAL)
+	if (item.type == BT_NORMAL)
 	{
-		KickClient(victim, "You have been banned. Reason: %s", reason);
+		KickClient(victim, "You have been banned. Reason: %s", item.reason);
 	
-		ReplyToCommand(client, "[URNA] Sucessfully banned steamID %s", victimAuth);
-		if (banLength > 0)
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal ban. Admin: %N. Dĺžka banu: %i minút. Dôvod: %s", victimName, victimAuth, client, banLength, reason);
+		ReplyToCommand(client, "[URNA] Sucessfully banned steamID %s", item.targetSteam2);
+		if (item.banLength > 0)
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal ban. Admin: %N. Dĺžka banu: %i minút. Dôvod: %s",
+			               item.targetName, item.targetSteam2, client, item.banLength, item.reason);
 		else
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný ban. Admin: %N. Dôvod: %s", victimName, victimAuth, client, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný ban. Admin: %N. Dôvod: %s",
+			               item.targetName, item.targetSteam2, client, item.reason);
 	}
-	else if (type == BT_CT)
+	else if (item.type == BT_CT)
 	{
 		if (GetClientTeam(victim) == CS_TEAM_CT)
 			ChangeClientTeam(victim, CS_TEAM_T);
 		
-		ReplyToCommand(client, "[URNA] Sucessfully CT banned steamID %s", victimAuth);
-		if (banLength > 0)
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal CT ban. Admin: %N. Dĺžka banu: %i minút. Dôvod: %s", victimName, victimAuth, client, banLength, reason);
+		ReplyToCommand(client, "[URNA] Sucessfully CT banned steamID %s", item.targetSteam2);
+		if (item.banLength > 0)
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal CT ban. Admin: %N. Dĺžka banu: %i minút. Dôvod: %s",
+			               item.targetName, item.targetSteam2, client, item.banLength, item.reason);
 		else
-			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný CT ban. Admin: %N. Dôvod: %s", victimName, victimAuth, client, reason);
+			PrintToChatAll(" \x07 [URNA] Hráč %s (%s) dostal permanentný CT ban. Admin: %N. Dôvod: %s",
+			               item.targetName, item.targetSteam2, client, item.reason);
 	}
 	
 	return Plugin_Handled;
@@ -247,7 +279,7 @@ public Action CMDUnban(int client, int argc)
 	return Plugin_Handled;
 }
 
-public Action CMDAddBan(int client, int argc)
+/*public Action CMDAddBan(int client, int argc)
 {
 	char command[32];
 	GetCmdArg(0, command, sizeof(command));
@@ -293,7 +325,7 @@ public Action CMDAddBan(int client, int argc)
 	
 	ReplyToCommand(client, "[URNA] Ban added successfully");
 	return Plugin_Handled;
-}
+}*/
 
 public Action TimerCallbackRemoveBans(Handle timer, any data)
 {
