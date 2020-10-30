@@ -137,9 +137,7 @@ public Action AltJoin(int client, const char[] command, int argc)
 	
 	if (teamJoin == CS_TEAM_CT)
 	{
-		char auth[32];
-		GetClientAuthId(client, AuthId_Steam2, auth, sizeof(auth));
-		if (IsBanned(auth, "", 0))
+		if (IsBanned(client, "", 0))
 		{
 			PrintCenterText(client, "Máš CT ban");
 			return Plugin_Handled;
