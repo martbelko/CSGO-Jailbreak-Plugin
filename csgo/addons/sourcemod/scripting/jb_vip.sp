@@ -202,7 +202,7 @@ void AddToDatabase(int client, char[] steamid, char[] type, int length)
 		return;
 	}
 	
-	ReplyToCommand(client, "Added to database");
+	ReplyToCommand(client, "[URNA] Added to database");
 }
 
 bool IsSteamidInDatabase(const char[] steamid)
@@ -229,7 +229,7 @@ void RemoveFromDatabase(int client, const char[] steamid)
 {
 	if (!IsSteamidInDatabase(steamid))
 	{
-		ReplyToCommand(client, "Unable to find steamid '%s' in database", steamid);
+		ReplyToCommand(client, "[URNA] Unable to find steamid '%s' in database", steamid);
 		return;
 	}
 	
@@ -246,14 +246,14 @@ void RemoveFromDatabase(int client, const char[] steamid)
 		return;
 	}
 	
-	ReplyToCommand(client, "Removed from VIP");
+	ReplyToCommand(client, "[URNA] Removed from VIP");
 }
 
 public Action CMDAddVip(int client, int args)
 {
 	if (args < 1)
 	{
-		ReplyToCommand(client, "Usage: sm_addvip <steamid1>");
+		ReplyToCommand(client, "[URNA] Usage: sm_addvip <steamid1>");
 		return Plugin_Handled;
 	}
 	
@@ -269,7 +269,7 @@ public Action CMDAddExtraVip(int client, int args)
 {
 	if (args < 1)
 	{
-		ReplyToCommand(client, "Usage: sm_addvip <steamid1>");
+		ReplyToCommand(client, "[URNA] Usage: sm_addvip <steamid1>");
 		return Plugin_Handled;
 	}
 	
@@ -283,7 +283,7 @@ public Action CMDRemoveVip(int client, int args)
 {
 	if (args < 1)
 	{
-		ReplyToCommand(client, "Usage: sm_removevip <steamid>");
+		ReplyToCommand(client, "[URNA] Usage: sm_removevip <steamid>");
 		return Plugin_Handled;
 	}
 	
