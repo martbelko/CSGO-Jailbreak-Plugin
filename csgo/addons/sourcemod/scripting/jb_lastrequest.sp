@@ -676,27 +676,27 @@ public Action CMDLastRequest(int client, int args)
 	}
 	if (GetClientTeam(client) != CS_TEAM_T)
 	{
-		ReplyToCommand(client, "[URNA Last Request] You can use this commnad only when you are on T side");
+		ReplyToCommand(client, "[URNA LastRequest] You can use this commnad only when you are on T side");
 		return Plugin_Handled;
 	}
 	if (!IsPlayerAlive(client))
 	{
-		ReplyToCommand(client, "[URNA Last Request] You can use this commnad only when you are alive");
+		ReplyToCommand(client, "[URNA LastRequest] You can use this commnad only when you are alive");
 		return Plugin_Handled;
 	}
 	if (GetNumberOfPlayers(CS_TEAM_T, true) != 1)
 	{
-		ReplyToCommand(client, "[URNA Last Request] You can use this command only if you are the last alive on T side");
+		ReplyToCommand(client, "[URNA LastRequest] You can use this command only if you are the last alive on T side");
 		return Plugin_Handled;
 	}
 	if (GetNumberOfPlayers(CS_TEAM_CT, true) == 0)
 	{
-		ReplyToCommand(client, "[URNA Last Request] You cannot use this command, nobody is alive on CT side");
+		ReplyToCommand(client, "[URNA LastRequest] You cannot use this command, nobody is alive on CT side");
 		return Plugin_Handled;
 	}
 	if (s_ActiveLr != LR_NO_LR)
 	{
-		ReplyToCommand(client, "[URNA Last Request] Last Request is still in progress");
+		ReplyToCommand(client, "[URNA LastRequest] Last Request is still in progress");
 		return Plugin_Handled;
 	}
 	
@@ -918,7 +918,7 @@ public int CallbackPlayerChoose(Menu menu, MenuAction action, int client, int op
 			}
 			else
 			{
-				PrintToChat(client, "[Jailbreak Last Request] Cannot start Last Request");
+				PrintToChat(client, "[URNA LastRequest] Cannot start Last Request");
 				delete menu;
 			}
 		}
@@ -950,7 +950,7 @@ public int MenuCallbackAskRebel(Menu menu, MenuAction action, int client, int op
 			}
 			else
 			{
-				PrintToChat(client, "[Jailbreak Last Request] Cannot start Last Request");
+				PrintToChat(client, "[URNA LastRequest] Cannot start Last Request");
 				delete menu;
 			}
 		}
