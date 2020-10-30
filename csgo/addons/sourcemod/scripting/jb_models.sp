@@ -179,6 +179,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 public void OnPluginStart()
 {
 	RegConsoleCmd("sm_models", CMDModels);
+	
 	HookEvent("player_spawn", OnPlayerSpawn);
 	
 	s_ModelArrayList = new ArrayList(sizeof(Model));
