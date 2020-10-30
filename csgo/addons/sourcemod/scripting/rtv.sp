@@ -29,7 +29,7 @@ public Plugin myinfo =
 #define s_InitialDelay 120.0 // Seconds
 #define s_RunOffPercentage 0.5
 #define s_MaxMapTime 45 // How many minutes can map be played before an automatic RTV
-#define s_ExtendTime 15 // Minutes
+#define s_ExtendTime 5 // Minutes
 
 enum RTVStatus
 {
