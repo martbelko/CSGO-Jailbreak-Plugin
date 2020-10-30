@@ -44,10 +44,10 @@ public void OnPluginStart()
 	RegAdminCmd("sm_ban", CMDBan, ADMFLAG_BAN, "Ban player");
 	//RegAdminCmd("sm_addban", CMDAddBan, ADMFLAG_BAN, "Add ban by steamID");
 	
-	// RegAdminCmd("sm_ctban", CMDBan, ADMFLAG_BAN, "CT Ban");
+	RegAdminCmd("sm_ctban", CMDBan, ADMFLAG_BAN, "CT Ban");
 	// RegAdminCmd("sm_addctban", CMDAddBan, ADMFLAG_BAN, "Add CT Ban");
 	
-	// RegAdminCmd("sm_unban", CMDUnban, ADMFLAG_UNBAN, "Unban player");
+	RegAdminCmd("sm_unban", CMDUnban, ADMFLAG_UNBAN, "Unban player");
 
 	char error[256];
 	DB = SQL_Connect("banlist", true, error, sizeof(error));
@@ -122,9 +122,9 @@ bool AddSqlBan(BanItem item)
 	char timeFormat[32];
 	FormatTime(timeFormat, sizeof(timeFormat), "%d/%m/%Y, %H:%M:%S", curTime);
 	
-	char query[256];
+	char query[512];
 	Format(query, sizeof(query),
-	"INSERT INTO Banlist VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%i', '%i', '%i')",
+	"INSERT INTO Banlist (adminName, adminSteam2, targetName, targetSteam2, targetSteam3, targetSteam64, targetIP, reason, banLength, banType, rawTime) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%i', '%i', '%i')",
 	item.adminName, item.adminSteam2, item.targetName, item.targetSteam2, item.targetSteam3, item.targetSteam64, item.targetIP, item.reason, item.banLength, view_as<int>(item.type), curTime);
 	DBResultSet queryResult = SQL_Query(DB, query);
 	if (queryResult == INVALID_HANDLE)
@@ -137,9 +137,31 @@ bool AddSqlBan(BanItem item)
 	return true;
 }
 
-bool RemoveSqlBan(const char[] auth, char[] error, int maxLength)
+BanType GetBanType(int id, char[] error, int maxErrorLength)
 {
-	if (!IsBanned(auth, error, maxLength))
+	char query[256];
+	Format(query, sizeof(query), "SELECT id, banType FROM Banlist WHERE id=%i", id);
+	DBResultSet queryResult = SQL_Query(DB, query);
+	if (queryResult == INVALID_HANDLE)
+	{
+		SQL_GetError(DB, error, maxErrorLength);
+		return BT_NONE;
+	}
+	
+	if (SQL_FetchRow(queryResult))
+	{
+		BanType type = view_as<BanType>(queryResult.FetchInt(1));
+		CloseHandle(queryResult);
+		return type;
+	}
+	
+	CloseHandle(queryResult);
+	return BT_NONE;
+}
+
+bool RemoveSqlBan(int id, char[] error, int maxLength)
+{
+	if (GetBanType(id, error, maxLength) == BT_NONE)
 	{
 		if (strlen(error) == 0)
 		{
@@ -151,7 +173,7 @@ bool RemoveSqlBan(const char[] auth, char[] error, int maxLength)
 	}
 	
 	char query[256];
-	Format(query, sizeof(query), "DELETE FROM Banlist WHERE victimAuth='%s'", auth);
+	Format(query, sizeof(query), "DELETE FROM Banlist WHERE id=%i", id);
 	Handle queryResult = SQL_Query(DB, query);
 	if (queryResult == INVALID_HANDLE)
 	{
@@ -217,14 +239,13 @@ public Action CMDBan(int client, int args)
 	GetClientName(client, item.adminName, sizeof(item.adminName));
 	GetClientName(victim, item.targetName, sizeof(item.targetName));
 	
-	char error[256];
 	item.type = BT_NORMAL;
 	if (StrEqual(command, "sm_ctban"))
 		item.type = BT_CT;
 	
 	if (!AddSqlBan(item))
 	{
-		ReplyToCommand(client, error);
+		ReplyToCommand(client, item.error);
 		return Plugin_Handled;
 	}
 	
@@ -261,15 +282,15 @@ public Action CMDUnban(int client, int argc)
 {
 	if (argc != 1)
 	{
-		ReplyToCommand(client, "[URNA] Usage: sm_unban <steamid>");
+		ReplyToCommand(client, "[URNA] Usage: sm_unban <banid>");
 		return Plugin_Handled;
 	}
 	
-	char auth[32];
-	GetCmdArg(1, auth, sizeof(auth));
-	
+	char idStr[32];
+	GetCmdArg(1, idStr, sizeof(idStr));
 	char error[256];
-	if (!RemoveSqlBan(auth, error, sizeof(error)))
+	int id = StringToInt(idStr, 10);
+	if (!RemoveSqlBan(id, error, sizeof(error)))
 	{
 		ReplyToCommand(client, "[URNA] Error: %s", error);
 		return Plugin_Handled;
