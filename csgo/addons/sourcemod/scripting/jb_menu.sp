@@ -407,7 +407,7 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_menu", CMDMenu, "Menu for guards/prisoners");
 	RegConsoleCmd("sm_shop", CMDShop, "Shop for guards/prisoners");
 	RegAdminCmd("sm_setpoints", CMDSetPoints, ADMFLAG_CHEATS, "Set player points");
-	// TODO: sm_getpoints
+	RegAdminCmd("sm_getpoints", CMDGetPoints, ADMFLAG_CHEATS, "Get player points");
 
 	s_ShopItemsT = new ArrayList(sizeof(ShopItem));
 	s_ShopItemsCt = new ArrayList(sizeof(ShopItem));
@@ -600,7 +600,8 @@ public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
 public Action OnPlayerSpawnPost(int client)
 {
 	int team = GetClientTeam(client);
-	ShowMenuToPlayer(client, team);
+	if (!IsVoteInProgress())
+		ShowMenuToPlayer(client, team);
 	OnPointsChanged(client, s_Points[client]);
 }
 
@@ -654,7 +655,7 @@ public Action CMDSetPoints(int client, int argc)
 {
 	if (argc != 2)
 	{
-		ReplyToCommand(client, "[URNA Shop] Usage: sm_setpoints <target> <number of points>");
+		ReplyToCommand(client, "[URNA] Usage: sm_setpoints <target> <number of points>");
 		return Plugin_Handled;
 	}
 	
@@ -681,6 +682,36 @@ public Action CMDSetPoints(int client, int argc)
 		OnPointsChanged(targetList[i], s_Points[targetList[i]]);
 		ShowActivity2(client, "[URNA] ", "%N set shop points of %N to %i", client, targetList[i], points);
 		LogToFile("Log.log", "\"%L\" set shop points of \"%L\" to %i", client, targetList[i], points);
+	}
+	
+	return Plugin_Handled;
+}
+
+public Action CMDGetPoints(int client, int argc)
+{
+	if (argc != 1)
+	{
+		ReplyToCommand(client, "[URNA] Usage: sm_getpoints <target> <number of points>");
+		return Plugin_Handled;
+	}
+	
+	char buffer[128];
+	GetCmdArg(1, buffer, sizeof(buffer));
+	int targetList[MAXPLAYERS];
+	char targetName[MAX_NAME_LENGTH];
+	bool tn_is_ml;
+	int targetCount = ProcessTargetString(buffer, client, targetList, MAXPLAYERS, COMMAND_FILTER_CONNECTED, targetName, MAX_NAME_LENGTH, tn_is_ml);
+	if (targetCount <= 0)
+	{
+		ReplyToCommand(client, "[URNA Shop] No matching clients were found");
+		return Plugin_Handled;
+	}
+	
+	for (int i = 0; i < targetCount; ++i)
+	{
+		int target = targetList[i];
+		if (IsClientValid(client) && !IsFakeClient(target) && !IsClientSourceTV(target))
+			ReplyToCommand(client, "%N: %i", target, s_Points[target]);
 	}
 	
 	return Plugin_Handled;
