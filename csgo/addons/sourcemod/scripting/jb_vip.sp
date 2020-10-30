@@ -119,6 +119,9 @@ public Action OnPlayerHurtPost(Handle event, const char[] name, bool dontBroadca
 
 public Action SayHook(int client, const char[] command, int args)
 {
+	if (!IsClientValid(client))
+		return Plugin_Handled;
+	
 	char szText[512];
 	GetCmdArg(1, szText, sizeof(szText));
 	if (!strcmp(szText, ""))
