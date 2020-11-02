@@ -101,6 +101,11 @@ public void OnPluginStart()
 			OnClientPutInServer(i);
 }
 
+public void OnMapStart()
+{
+	PrecacheModel(MODEL_BALL, true);
+}
+
 public void OnMapEnd()
 {
 	ResetWardenTimer();
@@ -366,7 +371,7 @@ void CreateMenuBoxMode(Menu& menu)
 
 void SpawnWardenBall()
 {
-	if (!IsClientValid(s_Warden) || !IsClientInGame(s_Warden))
+	if (!IsClientValid(s_Warden))
 		return;
 	
 	float vec[2][3];
