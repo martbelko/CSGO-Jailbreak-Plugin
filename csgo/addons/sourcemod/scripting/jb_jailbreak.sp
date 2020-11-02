@@ -106,6 +106,8 @@ public void OnClientPutInServer(int client)
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 	SDKHook(client, SDKHook_WeaponDrop, OnWeaponDrop);
 	
+	CreateTimer(0.1, TimerShowPlayerHud, GetClientUserId(client), TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+	
 	GetClientName(client, s_OriginalNames[client], MAX_NAME_LENGTH);
 }
 
@@ -291,7 +293,6 @@ public Action OnPlayerSpawnPost(int client)
 	SetEntProp(client, Prop_Send, "m_CollisionGroup", 5);
 	
 	int userid = GetClientUserId(client);
-	CreateTimer(0.1, TimerShowPlayerHud, userid, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 	CreateTimer(0.1, TimerHideRadar, userid);
 	CreateTimer(0.5, TImerCallbackGiveWeapons, userid);
 	
